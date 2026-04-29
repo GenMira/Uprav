@@ -1,21 +1,43 @@
 package main
 
 import (
-    "uprav/api"
-		"errors"
-    "uprav/router"
-		"uprav/repository/gormrepository"
-    "net/http"
-    "github.com/labstack/echo/v4"
+	"context"
+	"errors"
+	"fmt"
+	"log"
+	"log/slog"
+	"os"
 
-		"gorm.io/gorm"
-    "gorm.io/driver/mysql"
+	"net/http"
+	"uprav/api"
+	"uprav/repository/gormrepository"
+	"uprav/router"
 
+	"github.com/labstack/echo/v4"
 
+	gormMysql "gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-func main() {
+func main(){
+
 	e := echo.New()
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	database := os.Getenv("DB_NAME")
+	dsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Asia%%2FTokyo",
+		user,
+		password,
+		host,
+		port,
+		database,
+	)
+	gormLogLevel := logger.Silent
+
 
 	db, err := gorm.Open(gormMysql.Open(dsn), &gorm.Config{
 		Logger:         logger.Default.LogMode(gormLogLevel),
@@ -31,9 +53,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	ctx := context.Background()
+
 	api.RegisterHandlers(
 		e,
-		router.NewServer(ctx, repo, activityService, notificationService, traqService, isDev),
+		router.NewServer(ctx, repo),
 	)
 	srv := &http.Server{
 		Addr:    "0.0.0.0:8080",
@@ -46,6 +70,7 @@ func main() {
 		}
 	}()
 
-	e.Logger.Fatal(e.Start(":1124"))
-	//localhost:1124
+	// シグナル待ちやクリーンアップ処理を追加
+	select {}
+
 }
