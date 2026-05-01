@@ -15,7 +15,7 @@ type Task struct{
 	Tag string
 	Deadline time.Time
 	Period time.Time
-	Assumption []uuid.UUID
+	//Assumption []uuid.UUID
 	Group uuid.UUID
 	Assign uuid.UUID
 }
