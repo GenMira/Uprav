@@ -136,12 +136,12 @@ components:
           format: date-time
           description: "目安の締切"
           example: "2023-12-25T18:00:00Z"
-        assumption:
-          type: array
-          items:
-            type: string
-            format: uuid
-          description: "前提タスクのID(複数を指定可能)"
+        # assumption:
+        #   type: array
+        #   items:
+        #     type: string
+        #     format: uuid
+        #   description: "前提タスクのID(複数を指定可能)"
         group:
           type: string
           format: uuid
@@ -194,12 +194,12 @@ components:
           format: date-time
           description: "目安の締切"
           example: "2023-12-25T18:00:00Z"
-        assumption:
-          type: array
-          items:
-            type: string
-            format: uuid
-          description: "前提タスクのID(複数を指定可能)"
+        # assumption:
+        #   type: array
+        #   items:
+        #     type: string
+        #     format: uuid
+        #   description: "前提タスクのID(複数を指定可能)"
         group:
           type: string
           format: uuid

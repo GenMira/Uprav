@@ -62,13 +62,13 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 		resp.Group = &group
 	}
 	resp.Uid = openapi_types.UUID(task.Uid)
-	if len(task.Assumption) > 0 {
-		assumption := make([]openapi_types.UUID, len(task.Assumption))
-		for i, id := range task.Assumption {
-			assumption[i] = openapi_types.UUID(id)
-		}
-		resp.Assumption = &assumption
-	}
+	// if len(task.Assumption) > 0 {
+	// 	assumption := make([]openapi_types.UUID, len(task.Assumption))
+	// 	for i, id := range task.Assumption {
+	// 		assumption[i] = openapi_types.UUID(id)
+	// 	}
+	// 	resp.Assumption = &assumption
+	// }
 
 	return resp
 }
@@ -90,13 +90,13 @@ func convertRequestToModel(req api.TaskRequest) model.Task {
 		task.Group = *req.Group
 	}
 	task.Uid = req.Uid
-	if req.Assumption != nil {
-		assumption := make([]uuid.UUID, len(*req.Assumption))
-		for i, id := range *req.Assumption {
-			assumption[i] = uuid.UUID(id)
-		}
-		task.Assumption = assumption
-	}
+	// if req.Assumption != nil {
+	// 	assumption := make([]uuid.UUID, len(*req.Assumption))
+	// 	for i, id := range *req.Assumption {
+	// 		assumption[i] = uuid.UUID(id)
+	// 	}
+	// 	task.Assumption = assumption
+	// }
 
 	return task
 }

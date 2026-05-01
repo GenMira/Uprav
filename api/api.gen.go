@@ -15,9 +15,6 @@ type TaskRequest struct {
 	// Assign 担当者のuid
 	Assign *openapi_types.UUID `json:"assign,omitempty"`
 
-	// Assumption 前提タスクのID(複数を指定可能)
-	Assumption *[]openapi_types.UUID `json:"assumption,omitempty"`
-
 	// Deadline 真の締切（ISO8601形式を推奨）
 	Deadline time.Time `json:"deadline"`
 
@@ -44,9 +41,6 @@ type TaskRequest struct {
 type TaskResponse struct {
 	// Assign 担当者のuid
 	Assign *openapi_types.UUID `json:"assign,omitempty"`
-
-	// Assumption 前提タスクのID(複数を指定可能)
-	Assumption *[]openapi_types.UUID `json:"assumption,omitempty"`
 
 	// Deadline 真の締切（ISO8601形式を推奨）
 	Deadline time.Time `json:"deadline"`
