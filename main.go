@@ -12,6 +12,7 @@ import (
 	"uprav/api"
 	"uprav/repository/gormrepository"
 	"uprav/router"
+	"uprav/model"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -52,6 +53,10 @@ func main(){
 		Logger:         logger.Default.LogMode(gormLogLevel),
 		TranslateError: true,
 	})
+
+	if err := model.Migrate(db); err != nil {
+		log.Fatalf("Migration failed: %v", err)
+	}
 
 	if err != nil {
 		log.Fatal(err)

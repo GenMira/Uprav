@@ -16,6 +16,7 @@ type Server struct {
 
 // NewServer：main.goから呼ばれる初期化関数
 func NewServer(ctx context.Context, repo *gormrepository.Repository) *Server {
+
 	return &Server{
 		ctx:  ctx,
 		repo: repo,
