@@ -23,11 +23,14 @@ import (
 func main(){
 
 	e := echo.New()
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	database := os.Getenv("DB_NAME")
+	user := os.Getenv("NS_MARIADB_USER")
+	password := os.Getenv("NS_MARIADB_PASSWORD")
+	host := os.Getenv("NS_MARIADB_HOSTNAME")
+	port := os.Getenv("NS_MARIADB_PORT")
+	database := os.Getenv("NS_MARIADB_DATABASE")
+	if user == "" || password == "" || host == "" || port == "" || database == "" {
+		log.Fatal("missing required database environment variables: DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME")
+	}
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Asia%%2FTokyo",
 		user,
