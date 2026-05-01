@@ -19,25 +19,25 @@ type TaskRequest struct {
 	Assumption *[]openapi_types.UUID `json:"assumption,omitempty"`
 
 	// Deadline 真の締切（ISO8601形式を推奨）
-	Deadline *time.Time `json:"deadline,omitempty"`
+	Deadline time.Time `json:"deadline"`
 
 	// Group タスクグループのID
 	Group *openapi_types.UUID `json:"group,omitempty"`
 
 	// Name 名前
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Period 目安の締切
 	Period *time.Time `json:"period,omitempty"`
 
 	// Priority 優先度
-	Priority *int `json:"priority,omitempty"`
+	Priority int `json:"priority"`
 
 	// Tag ジャンル
-	Tag *string `json:"tag,omitempty"`
+	Tag string `json:"tag"`
 
 	// Uid ユーザーの一意識別子 (uid)
-	Uid *openapi_types.UUID `json:"uid,omitempty"`
+	Uid openapi_types.UUID `json:"uid"`
 }
 
 // TaskResponse defines model for TaskResponse.
@@ -49,7 +49,7 @@ type TaskResponse struct {
 	Assumption *[]openapi_types.UUID `json:"assumption,omitempty"`
 
 	// Deadline 真の締切（ISO8601形式を推奨）
-	Deadline *time.Time `json:"deadline,omitempty"`
+	Deadline time.Time `json:"deadline"`
 
 	// Group タスクグループのID
 	Group *openapi_types.UUID `json:"group,omitempty"`
@@ -58,19 +58,19 @@ type TaskResponse struct {
 	Id *int `json:"id,omitempty"`
 
 	// Name 名前
-	Name *string `json:"name,omitempty"`
+	Name string `json:"name"`
 
 	// Period 目安の締切
 	Period *time.Time `json:"period,omitempty"`
 
 	// Priority 優先度
-	Priority *int `json:"priority,omitempty"`
+	Priority int `json:"priority"`
 
 	// Tag ジャンル
-	Tag *string `json:"tag,omitempty"`
+	Tag string `json:"tag"`
 
 	// Uid ユーザーの一意識別子 (uid)
-	Uid *openapi_types.UUID `json:"uid,omitempty"`
+	Uid openapi_types.UUID `json:"uid"`
 }
 
 // BadRequest defines model for BadRequest.

@@ -151,12 +151,13 @@ components:
           format: uuid
           description: "担当者のuid"
 
-      # 必須項目がある場合はここに追加します
-      # required:
-      #   - uid
-      #   - name
-      #   - priority
-      #   - tag
+      #必須項目がある場合はここに追加します
+      required:
+        - uid
+        - name
+        - priority
+        - tag
+        - deadline
     TaskResponse:
       type: object
       properties:
@@ -207,10 +208,9 @@ components:
           type: string
           format: uuid
           description: "担当者のuid"
-
-      # 必須項目がある場合はここに追加します
-      # required:
-      #   - uid
-      #   - name
-      #   - priority
-      #   - tag
+      required:
+        - uid
+        - name
+        - priority
+        - tag
+        - deadline
