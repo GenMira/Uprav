@@ -4,11 +4,13 @@ import (
 	//"gorm.io/gorm"
 	"uprav/model"
 	"context"
+	"fmt"
 
 )
 
 func (r *Repository) CreateTask(ctx context.Context, task *model.Task) error {
 	if err := r.db.Create(task).Error; err != nil {
+		fmt.Printf("[GORM ERROR] CreateTask failed: %v\n", err)
 		return err
 	}
 	return nil
