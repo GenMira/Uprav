@@ -77,14 +77,44 @@ type InternalServerError struct {
 	Message *string `json:"message,omitempty"`
 }
 
+// LoginJSONBody defines parameters for Login.
+type LoginJSONBody struct {
+	// Name ユーザーの名前
+	Name *string `json:"name,omitempty"`
+
+	// Password パスワード
+	Password *string `json:"password,omitempty"`
+}
+
+// SignupJSONBody defines parameters for Signup.
+type SignupJSONBody struct {
+	// Name ユーザーの名前
+	Name *string `json:"name,omitempty"`
+
+	// Password パスワード
+	Password *string `json:"password,omitempty"`
+}
+
+// LoginJSONRequestBody defines body for Login for application/json ContentType.
+type LoginJSONRequestBody LoginJSONBody
+
 // CreateTaskJSONRequestBody defines body for CreateTask for application/json ContentType.
 type CreateTaskJSONRequestBody = TaskRequest
 
+// SignupJSONRequestBody defines body for Signup for application/json ContentType.
+type SignupJSONRequestBody SignupJSONBody
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// login
+	// (POST /api/login)
+	Login(ctx echo.Context) error
 	// create new task
 	// (POST /api/newtask)
 	CreateTask(ctx echo.Context) error
+	// signup
+	// (POST /api/signup)
+	Signup(ctx echo.Context) error
 	// get all tasks
 	// (GET /api/tasks)
 	GetTasks(ctx echo.Context) error
@@ -95,12 +125,30 @@ type ServerInterfaceWrapper struct {
 	Handler ServerInterface
 }
 
+// Login converts echo context to params.
+func (w *ServerInterfaceWrapper) Login(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.Login(ctx)
+	return err
+}
+
 // CreateTask converts echo context to params.
 func (w *ServerInterfaceWrapper) CreateTask(ctx echo.Context) error {
 	var err error
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.CreateTask(ctx)
+	return err
+}
+
+// Signup converts echo context to params.
+func (w *ServerInterfaceWrapper) Signup(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.Signup(ctx)
 	return err
 }
 
@@ -141,7 +189,9 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.POST(baseURL+"/api/login", wrapper.Login)
 	router.POST(baseURL+"/api/newtask", wrapper.CreateTask)
+	router.POST(baseURL+"/api/signup", wrapper.Signup)
 	router.GET(baseURL+"/api/tasks", wrapper.GetTasks)
 
 }

@@ -50,6 +50,98 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /api/login:
+    post:
+      summary: login
+      tags:
+        - Authentication
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "ユーザーの名前"
+                  example: "Mira"
+                password:
+                  type: string
+                  description: "パスワード"
+                  example: "password123"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uid:
+                    type: string
+                    format: uuid
+                    description: "ユーザーの一意識別子 (uid)"
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                  name:
+                    type: string
+                    description: "ユーザーの名前"
+                    example: "Mira"
+                  token:
+                    type: string
+                    description: "認証用トークン (JWT)"
+                    example: "eyJhbGciOiJIUzI1NiIsInR..."
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/signup:
+    post:
+      summary: signup
+      tags:
+        - Authentication
+      operationId: signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "ユーザーの名前"
+                  example: "Mira"
+                password:
+                  type: string
+                  description: "パスワード"
+                  example: "password123"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uid:
+                    type: string
+                    format: uuid
+                    description: "ユーザーの一意識別子 (uid)"
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                  name:
+                    type: string
+                    description: "ユーザーの名前"
+                    example: "Mira"
+                  token:
+                    type: string
+                    description: "認証用トークン (JWT)"
+                    example: "eyJhbGciOiJIUzI1NiIsInR..."
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
 components:
   responses:
@@ -214,3 +306,4 @@ components:
         - priority
         - tag
         - deadline
+        
