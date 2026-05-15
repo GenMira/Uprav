@@ -62,16 +62,18 @@ func main(){
 		log.Fatal(err)
 	}
 
-	repo, err := gormrepository.NewGormRepository(db)
-	if err != nil {
-		log.Fatal(err)
-	}
+	taskRepo := gormrepository.NewTaskRepository(db)
+  userRepo := gormrepository.NewUserRepository(db)
 
 	ctx := context.Background()
 
 	api.RegisterHandlers(
 		e,
-		router.NewServer(ctx, repo),
+		router.NewServer(
+			ctx,
+			taskRepo,
+			userRepo,
+		),
 	)
 	srv := &http.Server{
 		Addr:    "0.0.0.0:8080",

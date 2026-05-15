@@ -10,15 +10,21 @@ import (
 // Server 構造体：ここにDB接続やサービスをまとめます
 type Server struct {
 	ctx  context.Context
-	repo *gormrepository.Repository
+	taskRepo gormrepository.TaskRepository // インターフェースで持つ
+	userRepo gormrepository.UserRepository // インターフェースで持つ
 	// repo, service などが必要ならここに追加していきます
 }
 
 // NewServer：main.goから呼ばれる初期化関数
-func NewServer(ctx context.Context, repo *gormrepository.Repository) *Server {
+func NewServer(
+		ctx context.Context, 
+		taskRepo gormrepository.TaskRepository, 
+		userRepo gormrepository.UserRepository,
+	) *Server {
 
 	return &Server{
 		ctx:  ctx,
-		repo: repo,
+		taskRepo: taskRepo,
+		userRepo: userRepo,
 	}
 }

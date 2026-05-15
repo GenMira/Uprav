@@ -1,14 +1,21 @@
 package gormrepository
 
 import (
-	//"gorm.io/gorm"
+	"gorm.io/gorm"
 	"uprav/model"
 	"context"
 	"fmt"
 
 )
+type taskRepository struct {
+	db *gorm.DB
+}
 
-func (r *Repository) CreateTask(ctx context.Context, task *model.Task) error {
+func NewTaskRepository(db *gorm.DB) *taskRepository {
+	return &taskRepository{db: db}
+}
+
+func (r *taskRepository) CreateTask(ctx context.Context, task *model.Task) error {
 	if err := r.db.Create(task).Error; err != nil {
 		fmt.Printf("[GORM ERROR] CreateTask failed: %v\n", err)
 		return err
@@ -16,7 +23,7 @@ func (r *Repository) CreateTask(ctx context.Context, task *model.Task) error {
 	return nil
 }
 
-func (r *Repository) GetAllTasks(ctx context.Context) ([]model.Task, error) {
+func (r *taskRepository) GetAllTasks(ctx context.Context) ([]model.Task, error) {
     var tasks []model.Task
     if err := r.db.WithContext(ctx).Find(&tasks).Error;err != nil {
 			return nil, err

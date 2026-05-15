@@ -61,37 +61,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: "ユーザーの名前"
-                  example: "Mira"
-                password:
-                  type: string
-                  description: "パスワード"
-                  example: "password123"
+              $ref: "#/components/schemas/AuthenticationRequest"
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  uid:
-                    type: string
-                    format: uuid
-                    description: "ユーザーの一意識別子 (uid)"
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-                  name:
-                    type: string
-                    description: "ユーザーの名前"
-                    example: "Mira"
-                  token:
-                    type: string
-                    description: "認証用トークン (JWT)"
-                    example: "eyJhbGciOiJIUzI1NiIsInR..."
+                $ref: "#/components/schemas/AuthenticationResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -107,37 +84,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: "ユーザーの名前"
-                  example: "Mira"
-                password:
-                  type: string
-                  description: "パスワード"
-                  example: "password123"
+              $ref: "#/components/schemas/AuthenticationRequest"
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  uid:
-                    type: string
-                    format: uuid
-                    description: "ユーザーの一意識別子 (uid)"
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-                  name:
-                    type: string
-                    description: "ユーザーの名前"
-                    example: "Mira"
-                  token:
-                    type: string
-                    description: "認証用トークン (JWT)"
-                    example: "eyJhbGciOiJIUzI1NiIsInR..."
+                $ref: "#/components/schemas/AuthenticationResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -306,4 +260,32 @@ components:
         - priority
         - tag
         - deadline
-        
+    AuthenticationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "ユーザーの名前"
+          example: "Mira"
+        password:
+          type: string
+          description: "パスワード"
+          example: "password123"
+      required:
+        - name
+        - password
+    AuthenticationResponse:
+      type: object
+      properties:
+        uid:
+          type: integer
+          description: "10000から始まるUID"
+          example: 10001
+        name:
+          type: string
+          description: "ユーザーの名前"
+          example: "Mira"
+        token:
+          type: string
+          description: "JWTトークン（未実装）"
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."

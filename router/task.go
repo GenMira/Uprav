@@ -14,7 +14,7 @@ import (
 
 // GetTasks (GET /api/tasks) の実装
 func (s *Server) GetTasks(e echo.Context) error {
-	tasks, err := s.repo.GetAllTasks(e.Request().Context())
+	tasks, err := s.taskRepo.GetAllTasks(e.Request().Context())
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get tasks")})
 	}
@@ -44,7 +44,7 @@ func (s *Server) CreateTask(e echo.Context) error {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to convert request")})
 	}
 
-	if err := s.repo.CreateTask(e.Request().Context(), &task); err != nil {
+	if err := s.taskRepo.CreateTask(e.Request().Context(), &task); err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to create task")})
 	}
 

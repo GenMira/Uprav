@@ -10,6 +10,27 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// AuthenticationRequest defines model for AuthenticationRequest.
+type AuthenticationRequest struct {
+	// Name ユーザーの名前
+	Name string `json:"name"`
+
+	// Password パスワード
+	Password string `json:"password"`
+}
+
+// AuthenticationResponse defines model for AuthenticationResponse.
+type AuthenticationResponse struct {
+	// Name ユーザーの名前
+	Name *string `json:"name,omitempty"`
+
+	// Token JWTトークン（未実装）
+	Token *string `json:"token,omitempty"`
+
+	// Uid 10000から始まるUID
+	Uid *int `json:"uid,omitempty"`
+}
+
 // TaskRequest defines model for TaskRequest.
 type TaskRequest struct {
 	// Assign 担当者のuid
@@ -77,32 +98,14 @@ type InternalServerError struct {
 	Message *string `json:"message,omitempty"`
 }
 
-// LoginJSONBody defines parameters for Login.
-type LoginJSONBody struct {
-	// Name ユーザーの名前
-	Name *string `json:"name,omitempty"`
-
-	// Password パスワード
-	Password *string `json:"password,omitempty"`
-}
-
-// SignupJSONBody defines parameters for Signup.
-type SignupJSONBody struct {
-	// Name ユーザーの名前
-	Name *string `json:"name,omitempty"`
-
-	// Password パスワード
-	Password *string `json:"password,omitempty"`
-}
-
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
-type LoginJSONRequestBody LoginJSONBody
+type LoginJSONRequestBody = AuthenticationRequest
 
 // CreateTaskJSONRequestBody defines body for CreateTask for application/json ContentType.
 type CreateTaskJSONRequestBody = TaskRequest
 
 // SignupJSONRequestBody defines body for Signup for application/json ContentType.
-type SignupJSONRequestBody SignupJSONBody
+type SignupJSONRequestBody = AuthenticationRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
