@@ -7,8 +7,7 @@ package model
 // }
 
 type User struct {
-    ID   uint   `gorm:"primaryKey"`
-    UID  int    `gorm:"uniqueIndex;autoIncrement:10000;not null"`
+    UID  int    `gorm:"primaryKey;autoIncrement:10000;not null"`
     Name string `gorm:"uniqueIndex;not null"`
     Password string `gorm:"not null"`
 }
