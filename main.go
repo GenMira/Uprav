@@ -16,6 +16,7 @@ import (
 	"uprav/model"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	echojwt "github.com/labstack/echo-jwt/v4"
 
 	gormMysql "gorm.io/driver/mysql"
@@ -48,15 +49,22 @@ func main(){
 	)
 	gormLogLevel := logger.Silent
 
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:8080"},
+		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
+		AllowHeaders: []string{echo.HeaderContentType, echo.HeaderAuthorization},
+	}))
+
 	e.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(jwtSecretEnv),
 		Skipper: func(c echo.Context) bool {
-			// CORSのPreflightリクエスト（OPTIONS）は常にスキップ
+			// CORSのPreflightリクエスト(OPTIONS)はJWTチェックをスキップ
 			if c.Request().Method == echo.OPTIONS {
 				return true
 			}
-			// /api/login と /api/signup の時はJWTチェックをスキップする
-			if strings.HasSuffix(c.Path(), "/api/login") || strings.HasSuffix(c.Path(), "/api/signup") {
+			// パスのブレをなくすため、リクエストの生パスで判定
+			path := c.Request().URL.Path
+			if path == "/api/login" || path == "/api/signup" || strings.HasSuffix(path, "/login") || strings.HasSuffix(path, "/signup") {
 				return true
 			}
 			return false
