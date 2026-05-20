@@ -69,6 +69,10 @@ func main(){
 			}
 			return false
 		},
+		ErrorHandler: func(c echo.Context, err error) error {
+			fmt.Printf("[JWT ERROR] Authentication failed: %v\n", err)
+			return err
+		},
 	}))
 
 
