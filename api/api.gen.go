@@ -57,9 +57,6 @@ type TaskRequest struct {
 
 	// Tag ジャンル
 	Tag string `json:"tag"`
-
-	// Uid ユーザーの一意識別子 (uid)
-	Uid openapi_types.UUID `json:"uid"`
 }
 
 // TaskResponse defines model for TaskResponse.
@@ -87,9 +84,6 @@ type TaskResponse struct {
 
 	// Tag ジャンル
 	Tag string `json:"tag"`
-
-	// Uid ユーザーの一意識別子 (uid)
-	Uid openapi_types.UUID `json:"uid"`
 }
 
 // BadRequest defines model for BadRequest.

@@ -162,11 +162,6 @@ components:
     TaskRequest:
       type: object
       properties:
-        uid:
-          type: string
-          format: uuid
-          description: "ユーザーの一意識別子 (uid)"
-          example: "550e8400-e29b-41d4-a716-446655440000"
         name:
           type: string
           description: "名前"
@@ -208,7 +203,6 @@ components:
 
       #必須項目がある場合はここに追加します
       required:
-        - uid
         - name
         - priority
         - tag
@@ -220,11 +214,6 @@ components:
           type: integer
           description: "タスクのID"
           example: 1
-        uid:
-          type: string
-          format: uuid
-          description: "ユーザーの一意識別子 (uid)"
-          example: "550e8400-e29b-41d4-a716-446655440000"
         name:
           type: string
           description: "名前"
@@ -264,7 +253,6 @@ components:
           format: uuid
           description: "担当者のuid"
       required:
-        - uid
         - name
         - priority
         - tag

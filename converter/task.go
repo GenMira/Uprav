@@ -61,7 +61,6 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 		group := openapi_types.UUID(task.Group)
 		resp.Group = &group
 	}
-	resp.Uid = openapi_types.UUID(task.Uid)
 	// if len(task.Assumption) > 0 {
 	// 	assumption := make([]openapi_types.UUID, len(task.Assumption))
 	// 	for i, id := range task.Assumption {
@@ -89,7 +88,6 @@ func convertRequestToModel(req api.TaskRequest) model.Task {
 	if req.Group != nil {
 		task.Group = *req.Group
 	}
-	task.Uid = req.Uid
 	// if req.Assumption != nil {
 	// 	assumption := make([]uuid.UUID, len(*req.Assumption))
 	// 	for i, id := range *req.Assumption {

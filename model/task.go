@@ -9,7 +9,7 @@ import (
 
 type Task struct{
 	gorm.Model
-	Uid uuid.UUID
+	Uid int
 	Name string
 	Priority int
 	Tag string
