@@ -51,6 +51,10 @@ func main(){
 	e.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(jwtSecretEnv),
 		Skipper: func(c echo.Context) bool {
+			// CORSのPreflightリクエスト（OPTIONS）は常にスキップ
+			if c.Request().Method == echo.OPTIONS {
+				return true
+			}
 			// /api/login と /api/signup の時はJWTチェックをスキップする
 			if strings.HasSuffix(c.Path(), "/api/login") || strings.HasSuffix(c.Path(), "/api/signup") {
 				return true
