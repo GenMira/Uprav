@@ -3,6 +3,7 @@ package router
 import (
 	"net/http"
 	"time"
+	"os"
 	"uprav/api"
 	"uprav/model"
 
@@ -11,8 +12,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//あとで環境変数から読み込む
-var jwtSecret = []byte("your-super-secret-key-uprav")
 
 type JwtCustomClaims struct {
 	UID  int    `json:"uid"`
@@ -21,6 +20,8 @@ type JwtCustomClaims struct {
 }
 
 func generateToken(uid int, name string) (string, error) {
+	jwtSecret := []byte(os.Getenv("JWT_SECRET_KEY"))
+
 	claims := &JwtCustomClaims{
 		UID:  uid,
 		Name: name,

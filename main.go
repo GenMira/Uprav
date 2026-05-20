@@ -32,11 +32,11 @@ func main(){
 	host := os.Getenv("NS_MARIADB_HOSTNAME")
 	port := os.Getenv("NS_MARIADB_PORT")
 	database := os.Getenv("NS_MARIADB_DATABASE")
-	jwtSecretEnv := os.Getenv("JWT_SECRET_KEY")
+	jwtSecretEnv := []byte(os.Getenv("JWT_SECRET_KEY"))
 	if user == "" || password == "" || host == "" || port == "" || database == "" {
 		log.Fatal("missing required database environment variables: DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME")
 	}
-	if jwtSecretEnv == "" {
+	if jwtSecretEnv == nil {
 		log.Fatal("missing required environment variable: JWT_SECRET_KEY")
 	}
 	dsn := fmt.Sprintf(
