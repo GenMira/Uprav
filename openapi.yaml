@@ -16,6 +16,8 @@ paths:
       tags:
         - Tasks
       operationId: getTasks
+      security:
+        - BearerAuth: []
       responses:
         "200":
           description: OK
@@ -33,6 +35,8 @@ paths:
       tags:
         - Tasks
       operationId: createTask
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -149,6 +153,11 @@ components:
               message:
                 type: string
                 example: Internal server error
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     TaskRequest:
       type: object
@@ -287,5 +296,5 @@ components:
           example: "Mira"
         token:
           type: string
-          description: "JWTトークン（未実装）"
+          description: "JWTトークン"
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."

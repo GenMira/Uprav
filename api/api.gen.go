@@ -10,6 +10,10 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+const (
+	BearerAuthScopes = "BearerAuth.Scopes"
+)
+
 // AuthenticationRequest defines model for AuthenticationRequest.
 type AuthenticationRequest struct {
 	// Name ユーザーの名前
@@ -24,7 +28,7 @@ type AuthenticationResponse struct {
 	// Name ユーザーの名前
 	Name *string `json:"name,omitempty"`
 
-	// Token JWTトークン（未実装）
+	// Token JWTトークン
 	Token *string `json:"token,omitempty"`
 
 	// Uid 10000から始まるUID
@@ -141,6 +145,8 @@ func (w *ServerInterfaceWrapper) Login(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) CreateTask(ctx echo.Context) error {
 	var err error
 
+	ctx.Set(BearerAuthScopes, []string{})
+
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.CreateTask(ctx)
 	return err
@@ -158,6 +164,8 @@ func (w *ServerInterfaceWrapper) Signup(ctx echo.Context) error {
 // GetTasks converts echo context to params.
 func (w *ServerInterfaceWrapper) GetTasks(ctx echo.Context) error {
 	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetTasks(ctx)

@@ -2,11 +2,41 @@ package router
 
 import (
 	"net/http"
+	"time"
 	"uprav/api"
 	"uprav/model"
+
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
+
+//あとで環境変数から読み込む
+var jwtSecret = []byte("your-super-secret-key-uprav")
+
+type JwtCustomClaims struct {
+	UID  int    `json:"uid"`
+	Name string `json:"name"`
+	jwt.RegisteredClaims
+}
+
+func generateToken(uid int, name string) (string, error) {
+	claims := &JwtCustomClaims{
+		UID:  uid,
+		Name: name,
+		RegisteredClaims: jwt.RegisteredClaims{
+			//有効時間は24時間
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+	}
+
+	// 署名アルゴリズム（HS256）を指定してトークンオブジェクトを作成
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// 秘密鍵で署名して文字列のトークンを生成
+	return token.SignedString(jwtSecret)
+}
 
 func (s *Server) Login(e echo.Context) error {
 	var req api.AuthenticationRequest
@@ -28,7 +58,10 @@ func (s *Server) Login(e echo.Context) error {
 		return e.JSON(http.StatusUnauthorized, api.BadRequest{Message: ptrString("Invalid name or password")})
 	}
 
-	token := "dummy-token-for-" + user.Name
+	token, err := generateToken(user.UID, user.Name)
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("Failed to generate token")})
+	}
 
 	return e.JSON(http.StatusOK, api.AuthenticationResponse{
 		Uid:   &user.UID,
@@ -62,7 +95,10 @@ func (s *Server) Signup(e echo.Context) error {
 	}
 
 	// ダミートークンの生成
-	token := "dummy-token-for-" + user.Name
+	token, err := generateToken(user.UID, user.Name)
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("Failed to generate token")})
+	}
 
 	return e.JSON(http.StatusOK, api.AuthenticationResponse{
 		Uid:  &user.UID,

@@ -7,6 +7,7 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"strings"
 
 	"net/http"
 	"uprav/api"
@@ -15,7 +16,7 @@ import (
 	"uprav/model"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	echojwt "github.com/labstack/echo-jwt/v4"
 
 	gormMysql "gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -30,8 +31,12 @@ func main(){
 	host := os.Getenv("NS_MARIADB_HOSTNAME")
 	port := os.Getenv("NS_MARIADB_PORT")
 	database := os.Getenv("NS_MARIADB_DATABASE")
+	jwtSecretEnv := os.Getenv("JWT_SECRET_KEY")
 	if user == "" || password == "" || host == "" || port == "" || database == "" {
 		log.Fatal("missing required database environment variables: DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME")
+	}
+	if jwtSecretEnv == "" {
+		log.Fatal("missing required environment variable: JWT_SECRET_KEY")
 	}
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Asia%%2FTokyo",
@@ -43,10 +48,16 @@ func main(){
 	)
 	gormLogLevel := logger.Silent
 
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-        AllowOrigins: []string{"*"},
-        AllowMethods: []string{echo.GET, echo.POST, echo.OPTIONS},
-    }))
+	e.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey: []byte(jwtSecretEnv),
+		Skipper: func(c echo.Context) bool {
+			// /api/login と /api/signup の時はJWTチェックをスキップする
+			if strings.HasSuffix(c.Path(), "/api/login") || strings.HasSuffix(c.Path(), "/api/signup") {
+				return true
+			}
+			return false
+		},
+	}))
 
 
 	db, err := gorm.Open(gormMysql.Open(dsn), &gorm.Config{
