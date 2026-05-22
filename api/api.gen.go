@@ -35,8 +35,14 @@ type AuthenticationResponse struct {
 	Uid *int `json:"uid,omitempty"`
 }
 
-// TaskRequest defines model for TaskRequest.
-type TaskRequest struct {
+// DeleteTaskRequest defines model for DeleteTaskRequest.
+type DeleteTaskRequest struct {
+	// Id タスクのID
+	Id int `json:"id"`
+}
+
+// NewTaskRequest defines model for NewTaskRequest.
+type NewTaskRequest struct {
 	// Assign 担当者のuid
 	Assign *openapi_types.UUID `json:"assign,omitempty"`
 
@@ -86,6 +92,38 @@ type TaskResponse struct {
 	Tag string `json:"tag"`
 }
 
+// UpdateTaskRequest defines model for UpdateTaskRequest.
+type UpdateTaskRequest struct {
+	// Assign 担当者のuid
+	Assign *openapi_types.UUID `json:"assign,omitempty"`
+
+	// Deadline 真の締切（ISO8601形式を推奨）
+	Deadline *time.Time `json:"deadline,omitempty"`
+
+	// Group タスクグループのID
+	Group *openapi_types.UUID `json:"group,omitempty"`
+
+	// Id タスクのID
+	Id int `json:"id"`
+
+	// Name 名前
+	Name *string `json:"name,omitempty"`
+
+	// Period 目安の締切
+	Period *time.Time `json:"period,omitempty"`
+
+	// Priority 優先度
+	Priority *int `json:"priority,omitempty"`
+
+	// Tag ジャンル
+	Tag *string `json:"tag,omitempty"`
+}
+
+// Accepted defines model for Accepted.
+type Accepted struct {
+	Message *string `json:"message,omitempty"`
+}
+
 // BadRequest defines model for BadRequest.
 type BadRequest struct {
 	Message *string `json:"message,omitempty"`
@@ -96,17 +134,26 @@ type InternalServerError struct {
 	Message *string `json:"message,omitempty"`
 }
 
+// DeleteTaskJSONRequestBody defines body for DeleteTask for application/json ContentType.
+type DeleteTaskJSONRequestBody = DeleteTaskRequest
+
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = AuthenticationRequest
 
 // CreateTaskJSONRequestBody defines body for CreateTask for application/json ContentType.
-type CreateTaskJSONRequestBody = TaskRequest
+type CreateTaskJSONRequestBody = NewTaskRequest
 
 // SignupJSONRequestBody defines body for Signup for application/json ContentType.
 type SignupJSONRequestBody = AuthenticationRequest
 
+// UpdateTaskJSONRequestBody defines body for UpdateTask for application/json ContentType.
+type UpdateTaskJSONRequestBody = UpdateTaskRequest
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// delete task
+	// (POST /api/deletetask)
+	DeleteTask(ctx echo.Context) error
 	// login
 	// (POST /api/login)
 	Login(ctx echo.Context) error
@@ -119,11 +166,25 @@ type ServerInterface interface {
 	// get all tasks
 	// (GET /api/tasks)
 	GetTasks(ctx echo.Context) error
+	// update task
+	// (POST /api/updatetask)
+	UpdateTask(ctx echo.Context) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
+}
+
+// DeleteTask converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteTask(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeleteTask(ctx)
+	return err
 }
 
 // Login converts echo context to params.
@@ -166,6 +227,17 @@ func (w *ServerInterfaceWrapper) GetTasks(ctx echo.Context) error {
 	return err
 }
 
+// UpdateTask converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateTask(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UpdateTask(ctx)
+	return err
+}
+
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
 // either of them for path registration
@@ -194,9 +266,11 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.POST(baseURL+"/api/deletetask", wrapper.DeleteTask)
 	router.POST(baseURL+"/api/login", wrapper.Login)
 	router.POST(baseURL+"/api/newtask", wrapper.CreateTask)
 	router.POST(baseURL+"/api/signup", wrapper.Signup)
 	router.GET(baseURL+"/api/tasks", wrapper.GetTasks)
+	router.POST(baseURL+"/api/updatetask", wrapper.UpdateTask)
 
 }

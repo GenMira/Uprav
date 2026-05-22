@@ -2,11 +2,12 @@ package router
 
 import (
 	"net/http"
-	"time"
 	"os"
+	"time"
 	"uprav/api"
 	"uprav/model"
 
+	"github.com/go-task/task/v3/errors"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -37,6 +38,30 @@ func generateToken(uid int, name string) (string, error) {
 
 	// 秘密鍵で署名して文字列のトークンを生成
 	return token.SignedString(jwtSecret)
+}
+
+func GetDataFromToken(e echo.Context) (int, string, error) {
+	token, ok := e.Get("user").(*jwt.Token)
+	if !ok {
+		return 0, "", errors.New("Unauthorized: Token missing")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return 0, "", errors.New("Unauthorized: Invalid claims")
+	}
+
+	uidFloat, ok := claims["uid"].(float64)
+	if !ok {
+		return 0, "", errors.New("Unauthorized: UID missing in token")
+	}
+
+	name, ok := claims["name"].(string)
+	if !ok {
+		return 0, "", errors.New("Unauthorized: Name missing in token")
+	}
+
+	return int(uidFloat), name, nil
 }
 
 func (s *Server) Login(e echo.Context) error {

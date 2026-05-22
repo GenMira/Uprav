@@ -28,15 +28,20 @@ func Convert[T any](src any) (T, error) {
 		case api.TaskResponse:
 			return any(convertTaskToResponse(v)).(T), nil
 		}
-	case api.TaskRequest:
+	case api.NewTaskRequest:
 		switch any(zero).(type) {
 		case model.Task:
 			return any(convertRequestToModel(v)).(T), nil
 		}
-	case *api.TaskRequest:
+	case *api.NewTaskRequest:
 		switch any(zero).(type) {
 		case model.Task:
 			return any(convertRequestToModel(*v)).(T), nil
+		}
+	case api.UpdateTaskRequest:
+		switch any(zero).(type) {
+		case model.Task:
+			return any(convertUpdateRequestToModel(v)).(T), nil
 		}
 	}
 
@@ -72,7 +77,7 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 	return resp
 }
 
-func convertRequestToModel(req api.TaskRequest) model.Task {
+func convertRequestToModel(req api.NewTaskRequest) model.Task {
 	task := model.Task{}
 
 	task.Name = req.Name
@@ -88,6 +93,28 @@ func convertRequestToModel(req api.TaskRequest) model.Task {
 	if req.Group != nil {
 		task.Group = *req.Group
 	}
+	// if req.Assumption != nil {
+	// 	assumption := make([]uuid.UUID, len(*req.Assumption))
+	// 	for i, id := range *req.Assumption {
+	// 		assumption[i] = uuid.UUID(id)
+	// 	}
+	// 	task.Assumption = assumption
+	// }
+
+	return task
+}
+
+func convertUpdateRequestToModel(req api.UpdateTaskRequest) model.Task {
+	task := model.Task{}
+
+	task.ID = uint(req.Id)
+	task.Name = *req.Name
+	task.Priority = *req.Priority
+	task.Tag = *req.Tag
+	task.Deadline = *req.Deadline
+	task.Period = *req.Period
+	task.Assign = *req.Assign
+	task.Group = *req.Group
 	// if req.Assumption != nil {
 	// 	assumption := make([]uuid.UUID, len(*req.Assumption))
 	// 	for i, id := range *req.Assumption {

@@ -71,7 +71,11 @@ func main(){
 		},
 		ErrorHandler: func(c echo.Context, err error) error {
 			fmt.Printf("[JWT ERROR] Authentication failed: %v\n", err)
-			return err
+			return c.JSON(
+				http.StatusUnauthorized,
+				map[string]string{
+					"message": fmt.Sprintf("Auth failed: %v", err.Error()),
+				})
 		},
 	}))
 

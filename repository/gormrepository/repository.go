@@ -10,7 +10,9 @@ import (
 
 type TaskRepository interface {
 	CreateTask(ctx context.Context, task *model.Task) error
-	GetAllTasks(ctx context.Context) ([]model.Task, error)
+	GetAllTasks(ctx context.Context, uid int) ([]model.Task, error)
+	DeleteTask(ctx context.Context, id int, uid int) error
+	UpdateTask(ctx context.Context, task *model.Task) error
 }
 
 type UserRepository interface {
