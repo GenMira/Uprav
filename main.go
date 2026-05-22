@@ -50,10 +50,25 @@ func main(){
 	gormLogLevel := logger.Silent
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8080"},
-		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
-		AllowHeaders: []string{echo.HeaderContentType, echo.HeaderAuthorization},
-	}))
+		AllowOrigins: []string{
+			"http://localhost:8080",
+		},
+		AllowMethods: []string{
+      echo.GET, 
+      echo.POST, 
+      echo.PUT, 
+      echo.PATCH, 
+      echo.DELETE, 
+      echo.OPTIONS,
+    },
+    AllowHeaders: []string{
+      echo.HeaderOrigin,
+      echo.HeaderContentType,
+      echo.HeaderAccept,
+      echo.HeaderAuthorization,
+    },
+    AllowCredentials: true,
+  }))
 
 	e.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(jwtSecretEnv),
