@@ -52,6 +52,7 @@ func main(){
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{
 			"http://localhost:8080",
+			"https://genmira.github.io/",
 		},
 		AllowMethods: []string{
       echo.GET, 
