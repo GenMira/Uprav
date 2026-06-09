@@ -55,3 +55,13 @@ func (r *taskRepository) UpdateTask(ctx context.Context, task *model.Task) error
 	}	
 	return nil
 }
+
+func (r *taskRepository) GetTask(ctx context.Context, id int, uid int) (*model.Task, error) {
+	var task model.Task
+	if err := r.db.WithContext(ctx).
+		Where("id = ? AND uid = ?", id, uid). // 本人のタスクのみ取得できるようUIDも条件に入れると安全です
+		First(&task).Error; err != nil {
+		return nil, err
+	}
+	return &task, nil
+}

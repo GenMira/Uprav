@@ -118,3 +118,27 @@ func (s *Server) UpdateTask(e echo.Context) error {
 	return e.JSON(http.StatusCreated, response)
 }
 
+func (s *Server) GetTask(e echo.Context) error {
+	loginUID, _ , err := GetDataFromToken(e)
+	if err != nil {
+		return e.JSON(http.StatusUnauthorized, api.BadRequest{Message: ptrString(err.Error())})
+	}
+
+	var req api.GetTaskRequest
+	if err := e.Bind(&req); err != nil {
+		return e.JSON(http.StatusBadRequest, api.BadRequest{Message: ptrString("invalid request body")})
+	}
+
+	task, err := s.taskRepo.GetTask(e.Request().Context(), req.Id, loginUID)
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get task")})
+	}
+
+	response, err := converter.Convert[api.TaskResponse](task)
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to build response")})
+	}
+
+	return e.JSON(http.StatusOK, response)
+}
+

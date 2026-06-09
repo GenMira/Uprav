@@ -41,6 +41,12 @@ type DeleteTaskRequest struct {
 	Id int `json:"id"`
 }
 
+// GetTaskRequest defines model for GetTaskRequest.
+type GetTaskRequest struct {
+	// Id タスクのID
+	Id int `json:"id"`
+}
+
 // NewTaskRequest defines model for NewTaskRequest.
 type NewTaskRequest struct {
 	// Assign 担当者のuid
@@ -51,6 +57,9 @@ type NewTaskRequest struct {
 
 	// Group タスクグループのID
 	Group *openapi_types.UUID `json:"group,omitempty"`
+
+	// IsEveryday 毎日繰り返すタスクかどうか
+	IsEveryday bool `json:"is_everyday"`
 
 	// Name 名前
 	Name string `json:"name"`
@@ -79,6 +88,9 @@ type TaskResponse struct {
 	// Id タスクのID
 	Id *int `json:"id,omitempty"`
 
+	// IsEveryday 毎日繰り返すタスクかどうか
+	IsEveryday bool `json:"is_everyday"`
+
 	// Name 名前
 	Name string `json:"name"`
 
@@ -105,6 +117,9 @@ type UpdateTaskRequest struct {
 
 	// Id タスクのID
 	Id int `json:"id"`
+
+	// IsEveryday 毎日繰り返すタスクかどうか
+	IsEveryday *bool `json:"is_everyday,omitempty"`
 
 	// Name 名前
 	Name *string `json:"name,omitempty"`
@@ -137,6 +152,9 @@ type InternalServerError struct {
 // DeleteTaskJSONRequestBody defines body for DeleteTask for application/json ContentType.
 type DeleteTaskJSONRequestBody = DeleteTaskRequest
 
+// GetTaskJSONRequestBody defines body for GetTask for application/json ContentType.
+type GetTaskJSONRequestBody = GetTaskRequest
+
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = AuthenticationRequest
 
@@ -154,6 +172,9 @@ type ServerInterface interface {
 	// delete task
 	// (POST /api/deletetask)
 	DeleteTask(ctx echo.Context) error
+	// get task
+	// (POST /api/gettask)
+	GetTask(ctx echo.Context) error
 	// login
 	// (POST /api/login)
 	Login(ctx echo.Context) error
@@ -184,6 +205,17 @@ func (w *ServerInterfaceWrapper) DeleteTask(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.DeleteTask(ctx)
+	return err
+}
+
+// GetTask converts echo context to params.
+func (w *ServerInterfaceWrapper) GetTask(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetTask(ctx)
 	return err
 }
 
@@ -267,6 +299,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.POST(baseURL+"/api/deletetask", wrapper.DeleteTask)
+	router.POST(baseURL+"/api/gettask", wrapper.GetTask)
 	router.POST(baseURL+"/api/login", wrapper.Login)
 	router.POST(baseURL+"/api/newtask", wrapper.CreateTask)
 	router.POST(baseURL+"/api/signup", wrapper.Signup)

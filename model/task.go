@@ -15,6 +15,7 @@ type Task struct{
 	Tag string
 	Deadline time.Time
 	Period time.Time
+	IsEveryday bool
 	//Assumption []uuid.UUID
 	Group uuid.UUID
 	Assign uuid.UUID

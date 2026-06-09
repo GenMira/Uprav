@@ -79,6 +79,31 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  /api/gettask:
+    post:
+      summary: get task
+      tags:
+        - Tasks
+      operationId: getTask
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetTaskRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/deletetask:
     post:
       summary: delete task
@@ -246,6 +271,10 @@ components:
           format: date-time
           description: "目安の締切"
           example: "2023-12-25T18:00:00Z"
+        is_everyday:
+          type: boolean
+          description: "毎日繰り返すタスクかどうか"
+          example: false
         # assumption:
         #   type: array
         #   items:
@@ -267,6 +296,7 @@ components:
         - priority
         - tag
         - deadline
+        - is_everyday
     TaskResponse:
       type: object
       properties:
@@ -298,6 +328,10 @@ components:
           format: date-time
           description: "目安の締切"
           example: "2023-12-25T18:00:00Z"
+        is_everyday:
+          type: boolean
+          description: "毎日繰り返すタスクかどうか"
+          example: false
         # assumption:
         #   type: array
         #   items:
@@ -317,6 +351,7 @@ components:
         - priority
         - tag
         - deadline
+        - is_everyday
     UpdateTaskRequest:
       type: object
       properties:
@@ -348,6 +383,10 @@ components:
           format: date-time
           description: "目安の締切"
           example: "2023-12-25T18:00:00Z"
+        is_everyday:
+          type: boolean
+          description: "毎日繰り返すタスクかどうか"
+          example: false
         # assumption:
         #   type: array
         #   items:
@@ -365,6 +404,15 @@ components:
       required:
         - id
     DeleteTaskRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "タスクのID"
+          example: 1
+      required:
+        - id
+    GetTaskRequest:
       type: object
       properties:
         id:

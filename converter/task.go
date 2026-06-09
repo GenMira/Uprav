@@ -55,6 +55,7 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 	resp.Priority = task.Priority
 	resp.Tag = task.Tag
 	resp.Deadline = task.Deadline
+	resp.IsEveryday = task.IsEveryday
 	if !task.Period.IsZero() {
 		resp.Period = &task.Period
 	}
@@ -84,6 +85,7 @@ func convertRequestToModel(req api.NewTaskRequest) model.Task {
 	task.Priority = req.Priority
 	task.Tag = req.Tag
 	task.Deadline = req.Deadline
+	task.IsEveryday = req.IsEveryday
 	if req.Period != nil {
 		task.Period = *req.Period
 	}
@@ -113,6 +115,7 @@ func convertUpdateRequestToModel(req api.UpdateTaskRequest) model.Task {
 	task.Tag = *req.Tag
 	task.Deadline = *req.Deadline
 	task.Period = *req.Period
+	task.IsEveryday = *req.IsEveryday
 	task.Assign = *req.Assign
 	task.Group = *req.Group
 	// if req.Assumption != nil {
