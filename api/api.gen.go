@@ -55,6 +55,9 @@ type NewTaskRequest struct {
 	// Deadline 真の締切（ISO8601形式を推奨）
 	Deadline time.Time `json:"deadline"`
 
+	// Description タスクの説明
+	Description *string `json:"description,omitempty"`
+
 	// Group タスクグループのID
 	Group *openapi_types.UUID `json:"group,omitempty"`
 
@@ -71,7 +74,7 @@ type NewTaskRequest struct {
 	Priority int `json:"priority"`
 
 	// Tag ジャンル
-	Tag string `json:"tag"`
+	Tag *string `json:"tag,omitempty"`
 }
 
 // TaskResponse defines model for TaskResponse.
@@ -81,6 +84,9 @@ type TaskResponse struct {
 
 	// Deadline 真の締切（ISO8601形式を推奨）
 	Deadline time.Time `json:"deadline"`
+
+	// Description タスクの説明
+	Description *string `json:"description,omitempty"`
 
 	// Group タスクグループのID
 	Group *openapi_types.UUID `json:"group,omitempty"`
@@ -101,7 +107,7 @@ type TaskResponse struct {
 	Priority int `json:"priority"`
 
 	// Tag ジャンル
-	Tag string `json:"tag"`
+	Tag *string `json:"tag,omitempty"`
 }
 
 // UpdateTaskRequest defines model for UpdateTaskRequest.
@@ -111,6 +117,9 @@ type UpdateTaskRequest struct {
 
 	// Deadline 真の締切（ISO8601形式を推奨）
 	Deadline *time.Time `json:"deadline,omitempty"`
+
+	// Description タスクの説明
+	Description *string `json:"description,omitempty"`
 
 	// Group タスクグループのID
 	Group *openapi_types.UUID `json:"group,omitempty"`

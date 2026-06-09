@@ -275,6 +275,10 @@ components:
           type: boolean
           description: "毎日繰り返すタスクかどうか"
           example: false
+        description:
+          type: string
+          description: "タスクの説明"
+          example: "場所は○○○教室、持ち物は△△△"
         # assumption:
         #   type: array
         #   items:
@@ -294,7 +298,6 @@ components:
       required:
         - name
         - priority
-        - tag
         - deadline
         - is_everyday
     TaskResponse:
@@ -332,6 +335,10 @@ components:
           type: boolean
           description: "毎日繰り返すタスクかどうか"
           example: false
+        description:
+          type: string
+          description: "タスクの説明"
+          example: "場所は○○○教室、持ち物は△△△"
         # assumption:
         #   type: array
         #   items:
@@ -349,7 +356,6 @@ components:
       required:
         - name
         - priority
-        - tag
         - deadline
         - is_everyday
     UpdateTaskRequest:
@@ -387,6 +393,10 @@ components:
           type: boolean
           description: "毎日繰り返すタスクかどうか"
           example: false
+        description:
+          type: string
+          description: "タスクの説明"
+          example: "場所は○○○教室、持ち物は△△△"
         # assumption:
         #   type: array
         #   items:

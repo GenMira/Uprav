@@ -53,7 +53,6 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 
 	resp.Name = task.Name
 	resp.Priority = task.Priority
-	resp.Tag = task.Tag
 	resp.Deadline = task.Deadline
 	resp.IsEveryday = task.IsEveryday
 	if !task.Period.IsZero() {
@@ -67,6 +66,13 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 		group := openapi_types.UUID(task.Group)
 		resp.Group = &group
 	}
+	if task.Tag != "" {
+		resp.Tag = &task.Tag
+	}
+	if task.Description != "" {
+		resp.Description = &task.Description
+	}
+
 	// if len(task.Assumption) > 0 {
 	// 	assumption := make([]openapi_types.UUID, len(task.Assumption))
 	// 	for i, id := range task.Assumption {
@@ -83,7 +89,6 @@ func convertRequestToModel(req api.NewTaskRequest) model.Task {
 
 	task.Name = req.Name
 	task.Priority = req.Priority
-	task.Tag = req.Tag
 	task.Deadline = req.Deadline
 	task.IsEveryday = req.IsEveryday
 	if req.Period != nil {
@@ -94,6 +99,12 @@ func convertRequestToModel(req api.NewTaskRequest) model.Task {
 	}
 	if req.Group != nil {
 		task.Group = *req.Group
+	}
+	if req.Tag != nil {
+		task.Tag = *req.Tag
+	}
+	if req.Description != nil {
+		task.Description = *req.Description
 	}
 	// if req.Assumption != nil {
 	// 	assumption := make([]uuid.UUID, len(*req.Assumption))

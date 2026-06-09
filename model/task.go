@@ -13,6 +13,7 @@ type Task struct{
 	Name string
 	Priority int
 	Tag string
+	Description string
 	Deadline time.Time
 	Period time.Time
 	IsEveryday bool
