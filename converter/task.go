@@ -120,7 +120,6 @@ func convertRequestToModel(req api.NewTaskRequest) model.Task {
 func convertUpdateRequestToModel(req api.UpdateTaskRequest) model.Task {
 	task := model.Task{}
 
-	task.ID = uint(req.Id)
 	task.Name = *req.Name
 	task.Priority = *req.Priority
 	task.Tag = *req.Tag

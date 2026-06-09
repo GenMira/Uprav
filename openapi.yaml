@@ -10,6 +10,7 @@ servers:
     description: development server
 
 paths:
+  #エンドポイント
   /api/tasks:
     get:
       summary: get all tasks
@@ -29,7 +30,7 @@ paths:
                   $ref: "#/components/schemas/TaskResponse"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /api/newtask:
+          
     post:
       summary: create new task
       tags:
@@ -54,8 +55,36 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /api/updatetask:
-    post:
+
+  /api/tasks/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: タスクのID
+        schema:
+          type: integer
+
+    get:
+      summary: get task
+      tags:
+        - Tasks
+      operationId: getTask
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    put:
       summary: update task
       tags:
         - Tasks
@@ -79,45 +108,14 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /api/gettask:
-    post:
-      summary: get task
-      tags:
-        - Tasks
-      operationId: getTask
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GetTaskRequest"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TaskResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-  /api/deletetask:
-    post:
+
+    delete:
       summary: delete task
       tags:
         - Tasks
       operationId: deleteTask
       security:
         - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DeleteTaskRequest"
       responses:
         "200":
           $ref: "#/components/responses/Accepted"
@@ -125,6 +123,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalServerError"
+
+  #認証関係
   /api/login:
     post:
       summary: login
@@ -148,6 +148,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalServerError"
+          
   /api/signup:
     post:
       summary: signup
@@ -279,12 +280,6 @@ components:
           type: string
           description: "タスクの説明"
           example: "場所は○○○教室、持ち物は△△△"
-        # assumption:
-        #   type: array
-        #   items:
-        #     type: string
-        #     format: uuid
-        #   description: "前提タスクのID(複数を指定可能)"
         group:
           type: string
           format: uuid
@@ -293,8 +288,6 @@ components:
           type: string
           format: uuid
           description: "担当者のuid"
-
-      #必須項目がある場合はここに追加します
       required:
         - name
         - priority
@@ -339,12 +332,6 @@ components:
           type: string
           description: "タスクの説明"
           example: "場所は○○○教室、持ち物は△△△"
-        # assumption:
-        #   type: array
-        #   items:
-        #     type: string
-        #     format: uuid
-        #   description: "前提タスクのID(複数を指定可能)"
         group:
           type: string
           format: uuid
@@ -361,10 +348,6 @@ components:
     UpdateTaskRequest:
       type: object
       properties:
-        id:
-          type: integer
-          description: "タスクのID"
-          example: 1
         name:
           type: string
           description: "名前"
@@ -397,12 +380,6 @@ components:
           type: string
           description: "タスクの説明"
           example: "場所は○○○教室、持ち物は△△△"
-        # assumption:
-        #   type: array
-        #   items:
-        #     type: string
-        #     format: uuid
-        #   description: "前提タスクのID(複数を指定可能)"
         group:
           type: string
           format: uuid
@@ -411,26 +388,7 @@ components:
           type: string
           format: uuid
           description: "担当者のuid"
-      required:
-        - id
-    DeleteTaskRequest:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: "タスクのID"
-          example: 1
-      required:
-        - id
-    GetTaskRequest:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: "タスクのID"
-          example: 1
-      required:
-        - id
+    
     AuthenticationRequest:
       type: object
       properties:

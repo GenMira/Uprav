@@ -4,9 +4,12 @@
 package api
 
 import (
+	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
@@ -33,18 +36,6 @@ type AuthenticationResponse struct {
 
 	// Uid 10000から始まるUID
 	Uid *int `json:"uid,omitempty"`
-}
-
-// DeleteTaskRequest defines model for DeleteTaskRequest.
-type DeleteTaskRequest struct {
-	// Id タスクのID
-	Id int `json:"id"`
-}
-
-// GetTaskRequest defines model for GetTaskRequest.
-type GetTaskRequest struct {
-	// Id タスクのID
-	Id int `json:"id"`
 }
 
 // NewTaskRequest defines model for NewTaskRequest.
@@ -124,9 +115,6 @@ type UpdateTaskRequest struct {
 	// Group タスクグループのID
 	Group *openapi_types.UUID `json:"group,omitempty"`
 
-	// Id タスクのID
-	Id int `json:"id"`
-
 	// IsEveryday 毎日繰り返すタスクかどうか
 	IsEveryday *bool `json:"is_everyday,omitempty"`
 
@@ -158,74 +146,46 @@ type InternalServerError struct {
 	Message *string `json:"message,omitempty"`
 }
 
-// DeleteTaskJSONRequestBody defines body for DeleteTask for application/json ContentType.
-type DeleteTaskJSONRequestBody = DeleteTaskRequest
-
-// GetTaskJSONRequestBody defines body for GetTask for application/json ContentType.
-type GetTaskJSONRequestBody = GetTaskRequest
-
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = AuthenticationRequest
 
-// CreateTaskJSONRequestBody defines body for CreateTask for application/json ContentType.
-type CreateTaskJSONRequestBody = NewTaskRequest
-
 // SignupJSONRequestBody defines body for Signup for application/json ContentType.
 type SignupJSONRequestBody = AuthenticationRequest
+
+// CreateTaskJSONRequestBody defines body for CreateTask for application/json ContentType.
+type CreateTaskJSONRequestBody = NewTaskRequest
 
 // UpdateTaskJSONRequestBody defines body for UpdateTask for application/json ContentType.
 type UpdateTaskJSONRequestBody = UpdateTaskRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// delete task
-	// (POST /api/deletetask)
-	DeleteTask(ctx echo.Context) error
-	// get task
-	// (POST /api/gettask)
-	GetTask(ctx echo.Context) error
 	// login
 	// (POST /api/login)
 	Login(ctx echo.Context) error
-	// create new task
-	// (POST /api/newtask)
-	CreateTask(ctx echo.Context) error
 	// signup
 	// (POST /api/signup)
 	Signup(ctx echo.Context) error
 	// get all tasks
 	// (GET /api/tasks)
 	GetTasks(ctx echo.Context) error
+	// create new task
+	// (POST /api/tasks)
+	CreateTask(ctx echo.Context) error
+	// delete task
+	// (DELETE /api/tasks/{id})
+	DeleteTask(ctx echo.Context, id int) error
+	// get task
+	// (GET /api/tasks/{id})
+	GetTask(ctx echo.Context, id int) error
 	// update task
-	// (POST /api/updatetask)
-	UpdateTask(ctx echo.Context) error
+	// (PUT /api/tasks/{id})
+	UpdateTask(ctx echo.Context, id int) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
-}
-
-// DeleteTask converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteTask(ctx echo.Context) error {
-	var err error
-
-	ctx.Set(BearerAuthScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.DeleteTask(ctx)
-	return err
-}
-
-// GetTask converts echo context to params.
-func (w *ServerInterfaceWrapper) GetTask(ctx echo.Context) error {
-	var err error
-
-	ctx.Set(BearerAuthScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetTask(ctx)
-	return err
 }
 
 // Login converts echo context to params.
@@ -234,17 +194,6 @@ func (w *ServerInterfaceWrapper) Login(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.Login(ctx)
-	return err
-}
-
-// CreateTask converts echo context to params.
-func (w *ServerInterfaceWrapper) CreateTask(ctx echo.Context) error {
-	var err error
-
-	ctx.Set(BearerAuthScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.CreateTask(ctx)
 	return err
 }
 
@@ -268,14 +217,68 @@ func (w *ServerInterfaceWrapper) GetTasks(ctx echo.Context) error {
 	return err
 }
 
-// UpdateTask converts echo context to params.
-func (w *ServerInterfaceWrapper) UpdateTask(ctx echo.Context) error {
+// CreateTask converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateTask(ctx echo.Context) error {
 	var err error
 
 	ctx.Set(BearerAuthScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.UpdateTask(ctx)
+	err = w.Handler.CreateTask(ctx)
+	return err
+}
+
+// DeleteTask converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteTask(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeleteTask(ctx, id)
+	return err
+}
+
+// GetTask converts echo context to params.
+func (w *ServerInterfaceWrapper) GetTask(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetTask(ctx, id)
+	return err
+}
+
+// UpdateTask converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateTask(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UpdateTask(ctx, id)
 	return err
 }
 
@@ -307,12 +310,12 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.POST(baseURL+"/api/deletetask", wrapper.DeleteTask)
-	router.POST(baseURL+"/api/gettask", wrapper.GetTask)
 	router.POST(baseURL+"/api/login", wrapper.Login)
-	router.POST(baseURL+"/api/newtask", wrapper.CreateTask)
 	router.POST(baseURL+"/api/signup", wrapper.Signup)
 	router.GET(baseURL+"/api/tasks", wrapper.GetTasks)
-	router.POST(baseURL+"/api/updatetask", wrapper.UpdateTask)
+	router.POST(baseURL+"/api/tasks", wrapper.CreateTask)
+	router.DELETE(baseURL+"/api/tasks/:id", wrapper.DeleteTask)
+	router.GET(baseURL+"/api/tasks/:id", wrapper.GetTask)
+	router.PUT(baseURL+"/api/tasks/:id", wrapper.UpdateTask)
 
 }

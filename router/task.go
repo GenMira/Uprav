@@ -10,8 +10,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// --- 以下、openapi.yaml で定義した operationId をメソッドとして実装 ---
-
 func ptrString(s string) *string {
 	return &s
 }
@@ -71,25 +69,20 @@ func (s *Server) CreateTask(e echo.Context) error {
 	return e.JSON(http.StatusCreated, response)
 }
 
-func (s *Server) DeleteTask(e echo.Context) error {
-	loginUID, _ , err := GetDataFromToken(e)
+// 引数に `id int` が自動で追加される（oapi-codegenの仕様）
+func (s *Server) DeleteTask(e echo.Context, id int) error {
+	loginUID, _, err := GetDataFromToken(e)
 	if err != nil {
 		return e.JSON(http.StatusUnauthorized, api.BadRequest{Message: ptrString(err.Error())})
 	}
-
-	var req api.DeleteTaskRequest
-	if err := e.Bind(&req); err != nil {
-		return e.JSON(http.StatusBadRequest, api.BadRequest{Message: ptrString("invalid request body")})
-	}
-	
-	if err := s.taskRepo.DeleteTask(e.Request().Context(), req.Id, loginUID); err != nil {
+	if err := s.taskRepo.DeleteTask(e.Request().Context(), id, loginUID); err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to delete task")})
 	}
 
-	return e.JSON(http.StatusAccepted,api.Accepted{Message:ptrString("Task was deleted successfully")})
+	return e.JSON(http.StatusOK, api.Accepted{Message: ptrString("Task was deleted successfully")})
 }
 
-func (s *Server) UpdateTask(e echo.Context) error {
+func (s *Server) UpdateTask(e echo.Context, id int) error {
 	loginUID, _ , err := GetDataFromToken(e)
 	if err != nil {
 		return e.JSON(http.StatusUnauthorized, api.BadRequest{Message: ptrString(err.Error())})
@@ -101,6 +94,7 @@ func (s *Server) UpdateTask(e echo.Context) error {
 	}
 
 	task, err := converter.Convert[model.Task](req)
+	task.ID = uint(id)
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("Failed to convert request")})
 	}
@@ -118,18 +112,13 @@ func (s *Server) UpdateTask(e echo.Context) error {
 	return e.JSON(http.StatusCreated, response)
 }
 
-func (s *Server) GetTask(e echo.Context) error {
+func (s *Server) GetTask(e echo.Context, id int) error {
 	loginUID, _ , err := GetDataFromToken(e)
 	if err != nil {
 		return e.JSON(http.StatusUnauthorized, api.BadRequest{Message: ptrString(err.Error())})
 	}
 
-	var req api.GetTaskRequest
-	if err := e.Bind(&req); err != nil {
-		return e.JSON(http.StatusBadRequest, api.BadRequest{Message: ptrString("invalid request body")})
-	}
-
-	task, err := s.taskRepo.GetTask(e.Request().Context(), req.Id, loginUID)
+	task, err := s.taskRepo.GetTask(e.Request().Context(), id, loginUID)
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get task")})
 	}
