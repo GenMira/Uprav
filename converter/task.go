@@ -51,6 +51,7 @@ func Convert[T any](src any) (T, error) {
 func convertTaskToResponse(task model.Task) api.TaskResponse {
 	resp := api.TaskResponse{}
 
+	resp.Id = ptrInt(int(task.ID))
 	resp.Name = task.Name
 	resp.Priority = task.Priority
 	resp.Deadline = task.Deadline
@@ -137,4 +138,8 @@ func convertUpdateRequestToModel(req api.UpdateTaskRequest) model.Task {
 	// }
 
 	return task
+}
+
+func ptrInt(i int) *int {
+	return &i
 }
