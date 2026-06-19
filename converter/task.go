@@ -29,6 +29,12 @@ func Convert[T any](src any, id ...uint) (T, error) {
 		case api.TaskResponse:
 			return any(convertTaskToResponse(v)).(T), nil
 		}
+	case *model.Task:
+		switch any(zero).(type) {
+		case api.TaskResponse:
+			// v はポインタなので、*v でデリファレンスして実体を渡す
+			return any(convertTaskToResponse(*v)).(T), nil
+		}
 	case api.NewTaskRequest:
 		switch any(zero).(type) {
 		case model.Task:

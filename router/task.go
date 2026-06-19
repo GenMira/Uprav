@@ -130,7 +130,7 @@ func (s *Server) GetTask(e echo.Context, id int) error {
 
 	response, err := converter.Convert[api.TaskResponse](task)
 	if err != nil {
-		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to build response")})
+		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString(err.Error())})
 	}
 
 	return e.JSON(http.StatusOK, response)
