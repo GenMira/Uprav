@@ -6,6 +6,8 @@ import (
 	"uprav/api"
 	"uprav/converter"
 	"uprav/model"
+	"errors"
+	"gorm.io/gorm"
 
 	"github.com/labstack/echo/v4"
 )
@@ -120,6 +122,9 @@ func (s *Server) GetTask(e echo.Context, id int) error {
 
 	task, err := s.taskRepo.GetTask(e.Request().Context(), id, loginUID)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return e.JSON(http.StatusNotFound, api.NotFound{Message: ptrString("task not found")})
+		}
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get task")})
 	}
 

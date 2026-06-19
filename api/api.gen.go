@@ -146,6 +146,11 @@ type InternalServerError struct {
 	Message *string `json:"message,omitempty"`
 }
 
+// NotFound defines model for NotFound.
+type NotFound struct {
+	Message *string `json:"message,omitempty"`
+}
+
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = AuthenticationRequest
 
