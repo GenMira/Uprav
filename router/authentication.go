@@ -132,3 +132,24 @@ func (s *Server) Signup(e echo.Context) error {
 		Token: &token,
 	})
 }
+
+func (s *Server) GetCurrentUser(e echo.Context) error {
+	loginUID, loginName, err := GetDataFromToken(e)
+	if err != nil {
+		// トークンが無効、または期限切れの場合
+		return e.JSON(http.StatusUnauthorized, api.BadRequest{
+			Message: ptrString("token expired or invalid"),
+		})
+	}
+
+	// トークンが有効であれば、現在のユーザー情報をそのまま返す
+	response := struct {
+		UID  int    `json:"uid"`
+		Name string `json:"name"`
+	}{
+		UID:  loginUID,
+		Name: loginName,
+	}
+
+	return e.JSON(http.StatusOK, response)
+}

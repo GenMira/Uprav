@@ -11,6 +11,34 @@ servers:
 
 paths:
   #エンドポイント
+  /api/me:
+    get:
+      summary: get current user status (Token validation)
+      tags:
+        - Authentication
+      operationId: getCurrentUser
+      security:
+        - BearerAuth: [] # トークンが必要であることを明記
+      responses:
+        "200":
+          description: Token is valid. Returns login user info.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uid:
+                    type: integer
+                    description: "ユーザーのUID"
+                    example: 10001
+                  name:
+                    type: string
+                    description: "ユーザーの名前"
+                    example: "Mira"
+        "401":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tasks:
     get:
       summary: get all tasks
