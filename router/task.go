@@ -136,3 +136,21 @@ func (s *Server) GetTask(e echo.Context, id int) error {
 	return e.JSON(http.StatusOK, response)
 }
 
+func (s *Server) GetTags(e echo.Context) error {
+	loginUID, _ , err := GetDataFromToken(e)
+	if err != nil {
+		return e.JSON(http.StatusUnauthorized, api.BadRequest{Message: ptrString(err.Error())})
+	}
+
+	tags, err := s.taskRepo.GetTags(e.Request().Context(), loginUID)
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get tags")})
+	}
+
+	response := api.TagsResponse{
+		Tags: &tags,
+	}
+
+	return e.JSON(http.StatusOK, response)
+}
+

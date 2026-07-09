@@ -65,3 +65,15 @@ func (r *taskRepository) GetTask(ctx context.Context, id int, uid int) (*model.T
 	}
 	return &task, nil
 }
+
+func (r *taskRepository) GetTags(ctx context.Context, uid int) ([]string, error) {
+	var tags []string
+	if err := r.db.WithContext(ctx).
+		Model(&model.Task{}).
+		Where("uid = ?", uid).
+		Distinct("tag").
+		Pluck("tag", &tags).Error; err != nil {
+		return nil, err
+	}
+	return tags, nil
+}

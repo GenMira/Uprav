@@ -14,6 +14,7 @@ type TaskRepository interface {
 	DeleteTask(ctx context.Context, id int, uid int) error
 	UpdateTask(ctx context.Context, task *model.Task) error
 	GetTask(ctx context.Context, id int, uid int) (*model.Task, error)
+	GetTags(ctx context.Context, uid int) ([]string, error)
 }
 
 type UserRepository interface {

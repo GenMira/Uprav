@@ -68,6 +68,12 @@ type NewTaskRequest struct {
 	Tag *string `json:"tag,omitempty"`
 }
 
+// TagsResponse defines model for TagsResponse.
+type TagsResponse struct {
+	// Tags タグのリスト
+	Tags *[]string `json:"tags,omitempty"`
+}
+
 // TaskResponse defines model for TaskResponse.
 type TaskResponse struct {
 	// Assign 担当者のuid
@@ -168,6 +174,9 @@ type ServerInterface interface {
 	// login
 	// (POST /api/login)
 	Login(ctx echo.Context) error
+	// get current user status (Token validation)
+	// (GET /api/me)
+	GetCurrentUser(ctx echo.Context) error
 	// signup
 	// (POST /api/signup)
 	Signup(ctx echo.Context) error
@@ -177,6 +186,9 @@ type ServerInterface interface {
 	// create new task
 	// (POST /api/tasks)
 	CreateTask(ctx echo.Context) error
+	// get all tags
+	// (GET /api/tasks/tags)
+	GetTags(ctx echo.Context) error
 	// delete task
 	// (DELETE /api/tasks/{id})
 	DeleteTask(ctx echo.Context, id int) error
@@ -199,6 +211,17 @@ func (w *ServerInterfaceWrapper) Login(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.Login(ctx)
+	return err
+}
+
+// GetCurrentUser converts echo context to params.
+func (w *ServerInterfaceWrapper) GetCurrentUser(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetCurrentUser(ctx)
 	return err
 }
 
@@ -230,6 +253,17 @@ func (w *ServerInterfaceWrapper) CreateTask(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.CreateTask(ctx)
+	return err
+}
+
+// GetTags converts echo context to params.
+func (w *ServerInterfaceWrapper) GetTags(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetTags(ctx)
 	return err
 }
 
@@ -316,9 +350,11 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.POST(baseURL+"/api/login", wrapper.Login)
+	router.GET(baseURL+"/api/me", wrapper.GetCurrentUser)
 	router.POST(baseURL+"/api/signup", wrapper.Signup)
 	router.GET(baseURL+"/api/tasks", wrapper.GetTasks)
 	router.POST(baseURL+"/api/tasks", wrapper.CreateTask)
+	router.GET(baseURL+"/api/tasks/tags", wrapper.GetTags)
 	router.DELETE(baseURL+"/api/tasks/:id", wrapper.DeleteTask)
 	router.GET(baseURL+"/api/tasks/:id", wrapper.GetTask)
 	router.PUT(baseURL+"/api/tasks/:id", wrapper.UpdateTask)

@@ -153,6 +153,25 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalServerError"
+  
+  /api/tasks/tags:
+    get:
+      summary: get all tags
+      tags:
+        - Tasks
+      operationId: getTags
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagsResponse"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 
   #認証関係
   /api/login:
@@ -418,6 +437,15 @@ components:
           type: string
           format: uuid
           description: "担当者のuid"
+    TagsResponse:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: "タグのリスト"
+          example: ["HomeWork", "HouseWork", "Hobby","Games"]
     
     AuthenticationRequest:
       type: object
