@@ -22,6 +22,13 @@ type UserRepository interface {
 	GetUserByName(ctx context.Context, name string) (*model.User, error)
 }
 
+type GroupRepository interface {
+	CreateGroup(ctx context.Context, group *model.Group) error
+	//JoinGroup(ctx context.Context, groupID int, userID int) error
+	//ExitGroup(ctx context.Context, groupID int, userID int) error
+	//DeleteGroup(ctx context.Context, groupID int) error
+	GetGroups(ctx context.Context, userID int) ([]model.Group, error)
+}
 // type Repository struct {
 // 	db *gorm.DB
 // }

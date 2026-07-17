@@ -111,6 +111,7 @@ func main(){
 
 	taskRepo := gormrepository.NewTaskRepository(db)
   userRepo := gormrepository.NewUserRepository(db)
+	groupRepo := gormrepository.NewGroupRepository(db)
 
 	ctx := context.Background()
 
@@ -120,6 +121,7 @@ func main(){
 			ctx,
 			taskRepo,
 			userRepo,
+			groupRepo,
 		),
 	)
 	srv := &http.Server{

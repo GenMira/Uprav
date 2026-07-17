@@ -38,6 +38,24 @@ type AuthenticationResponse struct {
 	Uid *int `json:"uid,omitempty"`
 }
 
+// GroupMember defines model for GroupMember.
+type GroupMember struct {
+	Name string `json:"name"`
+	Uid  string `json:"uid"`
+}
+
+// GroupsResponse defines model for GroupsResponse.
+type GroupsResponse struct {
+	// Id グループのID
+	Id openapi_types.UUID `json:"id"`
+
+	// Members グループに所属するメンバーの一覧
+	Members []GroupMember `json:"members"`
+
+	// Name グループ名
+	Name string `json:"name"`
+}
+
 // NewTaskRequest defines model for NewTaskRequest.
 type NewTaskRequest struct {
 	// Assign 担当者のuid
@@ -171,6 +189,9 @@ type UpdateTaskJSONRequestBody = UpdateTaskRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// get all groups
+	// (GET /api/groups)
+	GetGroups(ctx echo.Context) error
 	// login
 	// (POST /api/login)
 	Login(ctx echo.Context) error
@@ -203,6 +224,17 @@ type ServerInterface interface {
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
+}
+
+// GetGroups converts echo context to params.
+func (w *ServerInterfaceWrapper) GetGroups(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetGroups(ctx)
+	return err
 }
 
 // Login converts echo context to params.
@@ -349,6 +381,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.GET(baseURL+"/api/groups", wrapper.GetGroups)
 	router.POST(baseURL+"/api/login", wrapper.Login)
 	router.GET(baseURL+"/api/me", wrapper.GetCurrentUser)
 	router.POST(baseURL+"/api/signup", wrapper.Signup)

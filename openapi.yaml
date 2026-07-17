@@ -169,7 +169,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TagsResponse"
-
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/groups:
+    get:
+      summary: get all groups
+      tags:
+        - Groups
+      operationId: getGroups
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupsResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -446,6 +464,39 @@ components:
             type: string
           description: "タグのリスト"
           example: ["HomeWork", "HouseWork", "Hobby","Games"]
+    GroupMember:
+      type: object
+      properties:
+        uid:
+          type: string
+          example: "10001"
+        name:
+          type: string
+          example: "Mira"
+      required:
+        - uid
+        - name
+    GroupsResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "グループのID"
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        name:
+          type: string
+          description: "グループ名"
+          example: "開発チーム"
+        members:
+          type: array
+          description: "グループに所属するメンバーの一覧"
+          items:
+            $ref: "#/components/schemas/GroupMember"
+      required:
+        - id
+        - name
+        - members
     
     AuthenticationRequest:
       type: object
