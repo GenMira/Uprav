@@ -39,6 +39,41 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalServerError"
+
+  /api/user/{uid}:
+    parameters:
+      - name: uid
+        in: path
+        required: true
+        description: uid
+        schema:
+          type: integer
+    get:
+      summary: get user
+      tags:
+        - user
+      operationId: getUserByUID
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uid:
+                    type: integer
+                    description: "ユーザーのUID"
+                    example: 10001
+                  name:
+                    type: string
+                    description: "ユーザーの名前"
+                    example: "Mira"
+        "401":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tasks:
     get:
       summary: get all tasks

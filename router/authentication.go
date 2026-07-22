@@ -153,3 +153,27 @@ func (s *Server) GetCurrentUser(e echo.Context) error {
 
 	return e.JSON(http.StatusOK, response)
 }
+
+func (s *Server) GetUserByUID(e echo.Context,uid int) error {
+	_, _, err := GetDataFromToken(e)
+	if err != nil {
+		return e.JSON(http.StatusUnauthorized, api.BadRequest{
+			Message: ptrString("token expired or invalid"),
+		})
+	}
+
+	user,err := s.userRepo.GetUserByUID(e.Request().Context(),uid)
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get user")})
+	}
+
+	response := struct{
+		UID  int    `json:"uid"`
+		Name string `json:"name"`
+	}{
+		UID: user.UID,
+		Name: user.Name,
+	}
+
+	return e.JSON(http.StatusOK, response)
+}

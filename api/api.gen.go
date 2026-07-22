@@ -255,6 +255,9 @@ type ServerInterface interface {
 	// update task
 	// (PUT /api/tasks/{id})
 	UpdateTask(ctx echo.Context, id int) error
+	// get user
+	// (GET /api/user/{uid})
+	GetUserByUID(ctx echo.Context, uid int) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -454,6 +457,24 @@ func (w *ServerInterfaceWrapper) UpdateTask(ctx echo.Context) error {
 	return err
 }
 
+// GetUserByUID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUserByUID(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "uid" -------------
+	var uid int
+
+	err = runtime.BindStyledParameterWithOptions("simple", "uid", ctx.Param("uid"), &uid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: ""})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter uid: %s", err))
+	}
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetUserByUID(ctx, uid)
+	return err
+}
+
 // This is a simple interface which specifies echo.Route addition functions which
 // are present on both echo.Echo and echo.Group, since we want to allow using
 // either of them for path registration
@@ -496,5 +517,6 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.DELETE(baseURL+"/api/tasks/:id", wrapper.DeleteTask)
 	router.GET(baseURL+"/api/tasks/:id", wrapper.GetTask)
 	router.PUT(baseURL+"/api/tasks/:id", wrapper.UpdateTask)
+	router.GET(baseURL+"/api/user/:uid", wrapper.GetUserByUID)
 
 }
