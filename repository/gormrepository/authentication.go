@@ -32,3 +32,12 @@ func(r *userRepository) GetUserByName(ctx context.Context, name string) (*model.
 	}
 	return &user, nil
 }
+
+func(r *userRepository) GetUserByUID(ctx context.Context,uid int)(*model.User, error) {
+	var user model.User
+	if err := r.db.Where("uid = ?", uid).First(&user).Error; err != nil {
+		fmt.Printf("[GORM ERROR] GetUserByName failed: %v\n", err)
+		return nil, err
+	}
+	return &user, nil
+}

@@ -4,8 +4,8 @@ import (
 	"context"
 	"uprav/model"
 
+	"github.com/google/uuid"
 	//"gorm.io/gorm"
-
 )
 
 type TaskRepository interface {
@@ -20,13 +20,14 @@ type TaskRepository interface {
 type UserRepository interface {
 	CreateUser(ctx context.Context, user *model.User) error
 	GetUserByName(ctx context.Context, name string) (*model.User, error)
+	GetUserByUID(ctx context.Context,uid int)(*model.User, error)
 }
 
 type GroupRepository interface {
-	CreateGroup(ctx context.Context, group *model.Group) error
-	//JoinGroup(ctx context.Context, groupID int, userID int) error
-	//ExitGroup(ctx context.Context, groupID int, userID int) error
-	//DeleteGroup(ctx context.Context, groupID int) error
+	CreateGroup(ctx context.Context, name string, membersID []uint) (*model.Group, error)
+	GetGroup(ctx context.Context, groupID uuid.UUID) (*model.Group, error)
+	UpdateGroup(ctx context.Context, groupID uuid.UUID, name string, membersID []uint) (*model.Group, error)
+	DeleteGroup(ctx context.Context, groupID uuid.UUID) error
 	GetGroups(ctx context.Context, userID int) ([]model.Group, error)
 }
 // type Repository struct {

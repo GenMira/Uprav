@@ -12,8 +12,8 @@ func ConvertGroup[T any](src any) (T, error) {
 	switch v := src.(type) {
 	case []model.Group:
 		switch any(zero).(type) {
-		case []api.GroupsResponse:
-			out := make([]api.GroupsResponse, len(v))
+		case []api.GroupResponse:
+			out := make([]api.GroupResponse, len(v))
 			for i, g := range v {
 				out[i] = convertGroupToResponse(g)
 			}
@@ -21,12 +21,12 @@ func ConvertGroup[T any](src any) (T, error) {
 		}
 	case model.Group:
 		switch any(zero).(type) {
-		case api.GroupsResponse:
+		case api.GroupResponse:
 			return any(convertGroupToResponse(v)).(T), nil
 		}
 	case *model.Group:
 		switch any(zero).(type) {
-		case api.GroupsResponse:
+		case api.GroupResponse:
 			return any(convertGroupToResponse(*v)).(T), nil
 		}
 	}
@@ -35,8 +35,8 @@ func ConvertGroup[T any](src any) (T, error) {
 }
 
 // 内部の詰め替え用補助関数
-func convertGroupToResponse(group model.Group) api.GroupsResponse {
-	resp := api.GroupsResponse{
+func convertGroupToResponse(group model.Group) api.GroupResponse {
+	resp := api.GroupResponse{
 		Id:      group.ID,
 		Name:    group.Name,
 		Members: make([]api.GroupMember, len(group.Members)),
@@ -44,7 +44,7 @@ func convertGroupToResponse(group model.Group) api.GroupsResponse {
 
 	for i, member := range group.Members {
 		resp.Members[i] = api.GroupMember{
-			Uid:  member.UID,
+			Uid:  uint(member.UID),
 			Name: member.Name,
 		}
 	}

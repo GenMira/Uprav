@@ -185,12 +185,108 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GroupsResponse"
+                type: array
+                $ref: "#/components/schemas/GroupResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: create new group
+      tags:
+        - Groups
+      operationId: createGroup
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /api/groups/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: グループのID
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      summary: get group
+      tags:
+        - Groups
+      operationId: getGroup
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
+    delete:
+      summary: delete group
+      tags:
+        - Groups
+      operationId: deleteGroup
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/Accepted"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    put:
+      summary: update group
+      tags:
+        - Groups
+      operationId: updateGroup
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateGroupRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      
+    
   #認証関係
   /api/login:
     post:
@@ -468,15 +564,15 @@ components:
       type: object
       properties:
         uid:
-          type: string
-          example: "10001"
+          type: integer
+          example: 10001
         name:
           type: string
           example: "Mira"
       required:
         - uid
         - name
-    GroupsResponse:
+    GroupResponse:
       type: object
       properties:
         id:
@@ -495,6 +591,40 @@ components:
             $ref: "#/components/schemas/GroupMember"
       required:
         - id
+        - name
+        - members
+
+    GroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "グループ名"
+          example: "開発チーム"
+        members:
+          type: array
+          description: "グループに所属するメンバーのUID"
+          items:
+            type: integer
+            format: uint
+      required:
+        - name
+        - members
+    
+    UpdateGroupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "グループ名"
+          example: "開発チーム"
+        members:
+          type: array
+          description: "グループに所属するメンバーのUID"
+          items:
+            type: integer
+            format: uint
+      required:
         - name
         - members
     

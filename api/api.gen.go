@@ -41,11 +41,20 @@ type AuthenticationResponse struct {
 // GroupMember defines model for GroupMember.
 type GroupMember struct {
 	Name string `json:"name"`
-	Uid  string `json:"uid"`
+	Uid  int    `json:"uid"`
 }
 
-// GroupsResponse defines model for GroupsResponse.
-type GroupsResponse struct {
+// GroupRequest defines model for GroupRequest.
+type GroupRequest struct {
+	// Members グループに所属するメンバーのUID
+	Members []uint `json:"members"`
+
+	// Name グループ名
+	Name string `json:"name"`
+}
+
+// GroupResponse defines model for GroupResponse.
+type GroupResponse struct {
 	// Id グループのID
 	Id openapi_types.UUID `json:"id"`
 
@@ -125,6 +134,15 @@ type TaskResponse struct {
 	Tag *string `json:"tag,omitempty"`
 }
 
+// UpdateGroupRequest defines model for UpdateGroupRequest.
+type UpdateGroupRequest struct {
+	// Members グループに所属するメンバーのUID
+	Members []uint `json:"members"`
+
+	// Name グループ名
+	Name string `json:"name"`
+}
+
 // UpdateTaskRequest defines model for UpdateTaskRequest.
 type UpdateTaskRequest struct {
 	// Assign 担当者のuid
@@ -175,6 +193,12 @@ type NotFound struct {
 	Message *string `json:"message,omitempty"`
 }
 
+// CreateGroupJSONRequestBody defines body for CreateGroup for application/json ContentType.
+type CreateGroupJSONRequestBody = GroupRequest
+
+// UpdateGroupJSONRequestBody defines body for UpdateGroup for application/json ContentType.
+type UpdateGroupJSONRequestBody = UpdateGroupRequest
+
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
 type LoginJSONRequestBody = AuthenticationRequest
 
@@ -192,6 +216,18 @@ type ServerInterface interface {
 	// get all groups
 	// (GET /api/groups)
 	GetGroups(ctx echo.Context) error
+	// create new group
+	// (POST /api/groups)
+	CreateGroup(ctx echo.Context) error
+	// delete group
+	// (DELETE /api/groups/{id})
+	DeleteGroup(ctx echo.Context, id openapi_types.UUID) error
+	// get group
+	// (GET /api/groups/{id})
+	GetGroup(ctx echo.Context, id openapi_types.UUID) error
+	// update group
+	// (PUT /api/groups/{id})
+	UpdateGroup(ctx echo.Context, id openapi_types.UUID) error
 	// login
 	// (POST /api/login)
 	Login(ctx echo.Context) error
@@ -234,6 +270,71 @@ func (w *ServerInterfaceWrapper) GetGroups(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetGroups(ctx)
+	return err
+}
+
+// CreateGroup converts echo context to params.
+func (w *ServerInterfaceWrapper) CreateGroup(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.CreateGroup(ctx)
+	return err
+}
+
+// DeleteGroup converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteGroup(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeleteGroup(ctx, id)
+	return err
+}
+
+// GetGroup converts echo context to params.
+func (w *ServerInterfaceWrapper) GetGroup(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetGroup(ctx, id)
+	return err
+}
+
+// UpdateGroup converts echo context to params.
+func (w *ServerInterfaceWrapper) UpdateGroup(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "id" -------------
+	var id openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", ctx.Param("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
+	}
+
+	ctx.Set(BearerAuthScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UpdateGroup(ctx, id)
 	return err
 }
 
@@ -382,6 +483,10 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	}
 
 	router.GET(baseURL+"/api/groups", wrapper.GetGroups)
+	router.POST(baseURL+"/api/groups", wrapper.CreateGroup)
+	router.DELETE(baseURL+"/api/groups/:id", wrapper.DeleteGroup)
+	router.GET(baseURL+"/api/groups/:id", wrapper.GetGroup)
+	router.PUT(baseURL+"/api/groups/:id", wrapper.UpdateGroup)
 	router.POST(baseURL+"/api/login", wrapper.Login)
 	router.GET(baseURL+"/api/me", wrapper.GetCurrentUser)
 	router.POST(baseURL+"/api/signup", wrapper.Signup)
