@@ -5,6 +5,7 @@ import (
 	"uprav/model"
 	"context"
 	"fmt"
+	"log"
 	"github.com/google/uuid"
 )
 
@@ -70,13 +71,18 @@ func (r *groupRepository) CreateGroup(ctx context.Context, name string, membersI
 
 func (r *groupRepository) GetGroups(ctx context.Context, userID int) ([]model.Group, error) {
 	var groups []model.Group
-  if err := r.db.WithContext(ctx).
-		Preload("Members"). // レスポンス用にメンバー全員の情報をロードする
-		Joins("JOIN group_members ON group_members.group_id = groups.id").
-		Where("group_members.uid = ?", userID).
+
+	subQuery := r.db.Model(&model.GroupMember{}).Select("group_id").Where("uid = ?", userID)
+
+	if err := r.db.WithContext(ctx).
+		Preload("Members").
+		Where("id IN (?)", subQuery).
 		Find(&groups).Error; err != nil {
 		return nil, err
 	}
+
+	log.Printf("[DEBUG] GetGroups found %d groups", len(groups))
+
 	return groups, nil
 }
 
