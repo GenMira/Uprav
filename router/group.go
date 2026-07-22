@@ -7,6 +7,7 @@ import (
 
 	"uprav/api"
 	"uprav/converter"
+	"uprav/model"
 
 	"github.com/labstack/echo/v4"
 	"github.com/google/uuid"
@@ -24,6 +25,10 @@ func (s *Server) GetGroups(e echo.Context) error {
 	groups,err := s.groupRepo.GetGroups(e.Request().Context(),loginUID)
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get groups")})
+	}
+
+	if groups == nil {
+		groups = []model.Group{}
 	}
 
 	response, err := converter.ConvertGroup[[]api.GroupResponse](groups)
