@@ -80,9 +80,8 @@ func (r *groupRepository) GetGroups(ctx context.Context, userID int) ([]model.Gr
 		Find(&groups).Error; err != nil {
 		return nil, err
 	}
-
+	
 	log.Printf("[DEBUG] GetGroups found %d groups", len(groups))
-
 	return groups, nil
 }
 

@@ -24,6 +24,7 @@ func (s *Server) GetGroups(e echo.Context) error {
 
 	groups,err := s.groupRepo.GetGroups(e.Request().Context(),loginUID)
 	if err != nil {
+		e.Logger().Errorf("GetGroups DB Error: %v", err)
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get groups")})
 	}
 
@@ -33,6 +34,7 @@ func (s *Server) GetGroups(e echo.Context) error {
 
 	response, err := converter.ConvertGroup[[]api.GroupResponse](groups)
   if err != nil {
+		e.Logger().Errorf("ConvertGroup Error: %v", err)
     return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to build response")})
   }
 
