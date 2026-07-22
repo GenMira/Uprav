@@ -35,6 +35,7 @@ func ConvertGroup[T any](src any) (T, error) {
 }
 
 // 内部の詰め替え用補助関数
+// 内部の詰め替え用補助関数
 func convertGroupToResponse(group model.Group) api.GroupResponse {
 	resp := api.GroupResponse{
 		Id:      group.ID,
@@ -44,7 +45,7 @@ func convertGroupToResponse(group model.Group) api.GroupResponse {
 
 	for i, member := range group.Members {
 		resp.Members[i] = api.GroupMember{
-			Uid:  uint(member.UID),
+			Uid:  int(member.UID),
 			Name: member.Name,
 		}
 	}

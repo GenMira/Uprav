@@ -64,10 +64,6 @@ func (s *Server) UpdateGroup(e echo.Context,id openapi_types.UUID) error {
 	}
 
 	groupID := uuid.UUID(id)
-	if err != nil {
-		return e.JSON(http.StatusBadRequest, api.BadRequest{Message: ptrString("invalid uuid format")})
-	}
-
 	var req api.UpdateGroupRequest
 	if err := e.Bind(&req); err != nil {
 		return e.JSON(http.StatusBadRequest, api.BadRequest{Message: ptrString("invalid request body")})
@@ -96,10 +92,6 @@ func (s *Server) DeleteGroup(e echo.Context,id openapi_types.UUID) error {
 	}
 
 	groupID := uuid.UUID(id)
-	if err != nil {
-		return e.JSON(http.StatusBadRequest, api.BadRequest{Message: ptrString("invalid uuid format")})
-	}
-
 	err = s.groupRepo.DeleteGroup(e.Request().Context(), groupID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -118,10 +110,6 @@ func (s *Server) GetGroup(e echo.Context,	id openapi_types.UUID) error {
 	}
 
 	groupID := uuid.UUID(id)
-	if err != nil {
-		return e.JSON(http.StatusBadRequest, api.BadRequest{Message: ptrString("invalid uuid format")})
-	}
-
 	group, err := s.groupRepo.GetGroup(e.Request().Context(), groupID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
