@@ -89,7 +89,7 @@ func (s *Server) CreateTask(e echo.Context) error {
 			return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get group from ID")})
 		}
 		response.AssignGroup = &group.Name
-		log.Printf("[CreateTask] response.AssignGroup: %d,task.AssignGroup: %s",response.AssignGroup,task.AssignGroup)
+		log.Printf("[CreateTask] response.AssignGroup: %s, task.AssignGroup: %s", *response.AssignGroup, task.AssignGroup)
 	}
 
 	return e.JSON(http.StatusCreated, response)
