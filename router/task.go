@@ -8,6 +8,7 @@ import (
 	"uprav/api"
 	"uprav/converter"
 	"uprav/model"
+	"log"
 
 	"gorm.io/gorm"
 
@@ -81,11 +82,15 @@ func (s *Server) CreateTask(e echo.Context) error {
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to build response")})
 	}
-	group,err := s.groupRepo.GetGroup(e.Request().Context(),task.AssignGroup)
-	if err != nil{
-		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get group from ID")})
+
+	if task.AssignGroup != uuid.Nil {
+		group, err := s.groupRepo.GetGroup(e.Request().Context(), task.AssignGroup)
+		if err != nil {
+			return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get group from ID")})
+		}
+		response.AssignGroup = &group.Name
+		log.Printf("[CreateTask] response.AssignGroup: %d,task.AssignGroup: %s",response.AssignGroup,task.AssignGroup)
 	}
-	response.AssignGroup=&group.Name
 
 	return e.JSON(http.StatusCreated, response)
 }
