@@ -75,10 +75,9 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 	if task.Assigner != "" {
 		resp.Assigner = &task.Assigner
 	}
-	if task.AssignGroup != uuid.Nil {
-    assignGroupStr := task.AssignGroup.String()
-    resp.AssignGroup = &assignGroupStr
-  }
+	if task.Group != uuid.Nil {
+		resp.Group = &task.Group
+	}
 	if task.Tag != "" {
 		resp.Tag = &task.Tag
 	}
@@ -89,7 +88,6 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 	return resp
 }
 
-//新規作成用
 func convertRequestToModel(req api.NewTaskRequest) model.Task {
 	task := model.Task{}
 
@@ -101,8 +99,8 @@ func convertRequestToModel(req api.NewTaskRequest) model.Task {
 	if req.Period != nil {
 		task.Period = *req.Period
 	}
-	if req.Assignee != nil {
-    task.AssignGroup = *req.AssignGroup
+	if req.AssignGroup != nil {
+		task.AssignGroup = *req.AssignGroup
 	}
 	if req.Group != nil {
 		task.Group = *req.Group
@@ -143,7 +141,7 @@ func convertUpdateRequestToModel(id uint, req api.UpdateTaskRequest) model.Task 
 	if req.Description != nil {
 		task.Description = *req.Description
 	}
-	if req.Assignee != nil {
+	if req.AssignGroup != nil {
 		task.AssignGroup = *req.AssignGroup
 	}
 	if req.Group != nil {
