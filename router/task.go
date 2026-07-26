@@ -37,6 +37,31 @@ func (s *Server) GetTasks(e echo.Context) error {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to convert tasks")})
 	}
 
+	groupNameCache := make(map[uuid.UUID]string)
+
+	// ループで AssignGroup (グループ名) を差し替える
+	for i, task := range tasks {
+		if task.AssignGroup == uuid.Nil {
+			continue
+		}
+
+		// キャッシュに無ければ DB から取得
+		groupName, exists := groupNameCache[task.AssignGroup]
+		if !exists {
+			group, err := s.groupRepo.GetGroup(e.Request().Context(), task.AssignGroup)
+			if err == nil {
+				groupName = group.Name
+				groupNameCache[task.AssignGroup] = groupName
+			}
+		}
+
+		// 取得できたグループ名でレスポンスの値を書き換える
+		if groupName != "" {
+			name := groupName
+			response[i].AssignGroup = &name
+		}
+	}
+
 	return e.JSON(http.StatusOK, response)
 }
 
