@@ -3,12 +3,16 @@ package router
 import (
 	"net/http"
 
+	"errors"
+	"fmt"
 	"uprav/api"
 	"uprav/converter"
 	"uprav/model"
-	"errors"
+
 	"gorm.io/gorm"
 
+	//"github.com/docker/docker/libnetwork/drivers/null"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -57,7 +61,17 @@ func (s *Server) CreateTask(e echo.Context) error {
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to convert request")})
 	}
-	task.Uid = loginUID
+
+	if task.AssignGroup!=uuid.Nil{
+		task.Uid = *req.Assignee
+		user,err := s.userRepo.GetUserByUID(e.Request().Context(), task.Uid)
+		if err != nil{
+			return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get username from UID")})
+		}
+		task.Assigner = fmt.Sprintf("%s(%d)", user.Name, task.Uid)
+	}else{
+		task.Uid = loginUID
+	}
 
 	if err := s.taskRepo.CreateTask(e.Request().Context(), &task); err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to create task")})
@@ -67,6 +81,11 @@ func (s *Server) CreateTask(e echo.Context) error {
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to build response")})
 	}
+	group,err := s.groupRepo.GetGroup(e.Request().Context(),task.AssignGroup)
+	if err != nil{
+		return e.JSON(http.StatusInternalServerError, api.InternalServerError{Message: ptrString("failed to get group from ID")})
+	}
+	response.AssignGroup=&group.Name
 
 	return e.JSON(http.StatusCreated, response)
 }

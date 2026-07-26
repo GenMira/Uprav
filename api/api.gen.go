@@ -67,8 +67,11 @@ type GroupResponse struct {
 
 // NewTaskRequest defines model for NewTaskRequest.
 type NewTaskRequest struct {
-	// Assign 担当者のuid
-	Assign *openapi_types.UUID `json:"assign,omitempty"`
+	// AssignGroup 担当者のグループ
+	AssignGroup *openapi_types.UUID `json:"assignGroup,omitempty"`
+
+	// Assignee 担当者のuid
+	Assignee *int `json:"assignee,omitempty"`
 
 	// Deadline 真の締切（ISO8601形式を推奨）
 	Deadline time.Time `json:"deadline"`
@@ -103,8 +106,11 @@ type TagsResponse struct {
 
 // TaskResponse defines model for TaskResponse.
 type TaskResponse struct {
-	// Assign 担当者のuid
-	Assign *openapi_types.UUID `json:"assign,omitempty"`
+	// AssignGroup 担当者のグループ
+	AssignGroup *string `json:"assignGroup,omitempty"`
+
+	// Assigner 割り当てた者のuid
+	Assigner *string `json:"assigner,omitempty"`
 
 	// Deadline 真の締切（ISO8601形式を推奨）
 	Deadline time.Time `json:"deadline"`
@@ -145,8 +151,11 @@ type UpdateGroupRequest struct {
 
 // UpdateTaskRequest defines model for UpdateTaskRequest.
 type UpdateTaskRequest struct {
-	// Assign 担当者のuid
-	Assign *openapi_types.UUID `json:"assign,omitempty"`
+	// AssignGroup 担当者のグループ
+	AssignGroup *openapi_types.UUID `json:"assignGroup,omitempty"`
+
+	// Assignee 担当者のuid
+	Assignee *int `json:"assignee,omitempty"`
 
 	// Deadline 真の締切（ISO8601形式を推奨）
 	Deadline *time.Time `json:"deadline,omitempty"`

@@ -19,5 +19,6 @@ type Task struct{
 	IsEveryday bool
 	//Assumption []uuid.UUID
 	Group uuid.UUID
-	Assign uuid.UUID
+	Assigner string
+	AssignGroup uuid.UUID
 }

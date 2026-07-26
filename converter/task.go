@@ -72,9 +72,8 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 	if !task.Period.IsZero() {
 		resp.Period = &task.Period
 	}
-	if task.Assign != uuid.Nil {
-		assign := openapi_types.UUID(task.Assign)
-		resp.Assign = &assign
+	if task.Assigner != "" {
+		resp.Assigner = &task.Assigner
 	}
 	if task.Group != uuid.Nil {
 		group := openapi_types.UUID(task.Group)
@@ -102,8 +101,8 @@ func convertRequestToModel(req api.NewTaskRequest) model.Task {
 	if req.Period != nil {
 		task.Period = *req.Period
 	}
-	if req.Assign != nil {
-		task.Assign = *req.Assign
+	if req.Assignee != nil {
+    task.AssignGroup = *req.AssignGroup
 	}
 	if req.Group != nil {
 		task.Group = *req.Group
@@ -144,8 +143,8 @@ func convertUpdateRequestToModel(id uint, req api.UpdateTaskRequest) model.Task 
 	if req.Description != nil {
 		task.Description = *req.Description
 	}
-	if req.Assign != nil {
-		task.Assign = *req.Assign
+	if req.Assignee != nil {
+		task.AssignGroup = *req.AssignGroup
 	}
 	if req.Group != nil {
 		task.Group = *req.Group

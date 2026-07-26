@@ -482,10 +482,13 @@ components:
           type: string
           format: uuid
           description: "タスクグループのID"
-        assign:
+        assignee:
+          type: integer
+          description: "担当者のuid"
+        assignGroup:
           type: string
           format: uuid
-          description: "担当者のuid"
+          description: "担当者のグループ"
       required:
         - name
         - priority
@@ -534,10 +537,12 @@ components:
           type: string
           format: uuid
           description: "タスクグループのID"
-        assign:
+        assigner:
           type: string
-          format: uuid
-          description: "担当者のuid"
+          description: "割り当てた者のuid"
+        assignGroup:
+          type: string
+          description: "担当者のグループ"        
       required:
         - name
         - priority
@@ -582,10 +587,13 @@ components:
           type: string
           format: uuid
           description: "タスクグループのID"
-        assign:
+        assignee:
+          type: integer
+          description: "担当者のuid"
+        assignGroup:
           type: string
           format: uuid
-          description: "担当者のuid"
+          description: "担当者のグループ"
     TagsResponse:
       type: object
       properties:
