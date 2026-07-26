@@ -540,7 +540,7 @@ components:
         assigner:
           type: string
           description: "割り当てた者のuid"
-        assignGroup:
+        assign_group:
           type: string
           description: "担当者のグループ"        
       required:

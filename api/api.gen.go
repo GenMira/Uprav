@@ -107,7 +107,7 @@ type TagsResponse struct {
 // TaskResponse defines model for TaskResponse.
 type TaskResponse struct {
 	// AssignGroup 担当者のグループ
-	AssignGroup *string `json:"assignGroup,omitempty"`
+	AssignGroup *string `json:"assign_group,omitempty"`
 
 	// Assigner 割り当てた者のuid
 	Assigner *string `json:"assigner,omitempty"`

@@ -7,7 +7,7 @@ import (
 	"uprav/model"
 
 	"github.com/google/uuid"
-	openapi_types "github.com/oapi-codegen/runtime/types"
+	//openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // Convert converts known types between API and model representations.
@@ -75,10 +75,10 @@ func convertTaskToResponse(task model.Task) api.TaskResponse {
 	if task.Assigner != "" {
 		resp.Assigner = &task.Assigner
 	}
-	if task.Group != uuid.Nil {
-		group := openapi_types.UUID(task.Group)
-		resp.Group = &group
-	}
+	if task.AssignGroup != uuid.Nil {
+    assignGroupStr := task.AssignGroup.String()
+    resp.AssignGroup = &assignGroupStr
+  }
 	if task.Tag != "" {
 		resp.Tag = &task.Tag
 	}
